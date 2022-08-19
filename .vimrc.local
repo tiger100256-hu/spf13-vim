@@ -1,0 +1,278 @@
+"source ~/.vimrc.mswin
+"MAP <LEader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$','.*\.o$','.*_.*','.*\.orig$']
+let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$','.\.o$','\.out$','.\.orig$']
+let g:NERDTreeHijackNetrw=0
+let g:vimspector_install_gadgets = ['vscode-cpptools', 'CodeLLDB' ]
+"let NERDTreeChDirMode=0
+let NERDTreeQuitOnOpen=1
+set wfh  
+set wfw 
+let g:indent_guides_enable_on_vim_startup = 0
+hi IndentGuidesOdd  ctermbg=black
+hi IndentGuidesEven ctermbg=darkgrey
+let g:DoxygenToolkit_briefTag_pre="@Synopsis "
+let g:DoxygenToolkit_paramTag_pre="@Param "
+let g:DoxygenToolkit_returnTag="@Returns "
+let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
+let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
+let g:DoxygenToolkit_authorName="huyuan"
+let g:neocomplete#auto_complete_delay = 500
+
+"let g:EchoFuncKeyNext=1
+"let g:EchoFuncKeyPrev=1
+set nobackup
+set background=dark
+set nospell
+let s:temporary_directory = "C:/Users/yuanhu1/Downloads/tmp/"
+let g:ycm_confirm_extra_conf=0 
+let g:ycm_seed_identifiers_with_syntax = 1
+
+"set async task
+let g:asyncrun_open = 6
+let g:asynctasks_term_pos = 'tab'
+
+"set netrw
+let g:netrw_winsize = 25
+let g:netrw_browse_split = 4
+let g:netrw_cygwin=1
+
+set nocompatible
+
+autocmd Filetype c set omnifunc=ccomplete#Complete
+if has('gui_running')
+   " set guifont=Lucida_Console:h16
+   set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 16
+endif
+"colorscheme CodeFactoryv3
+set encoding=utf-8 fileencodings=ucs-bom,utf-8,cp936
+set guioptions-=m
+
+command! BcloseOthers call <SID>BufCloseOthers()  
+function! <SID>BufCloseOthers()  
+   let l:currentBufNum   = bufnr("%")  
+   let l:alternateBufNum = bufnr("#")  
+   for i in range(1,bufnr("$"))  
+     if buflisted(i)  
+       if i!=l:currentBufNum  
+         execute("bdelete ".i)
+       endif  
+     endif  
+   endfor  
+endfunction  
+
+""source ~/.vimrc.cscope
+if has("cscope")
+    set nocsre
+    "set csprg=C:\Users\yuanhu1\Downloads\program\Vim\vim81\cscope.exe
+    set csprg=/usr/bin/cscope
+    "set csprg=/user/local/bin/gtags-cscope.exe
+    set csto=1
+    set cst
+    set nocsverb
+    " add any database in current directory
+    if filereadable("cscope.out")
+        cs add cscope.out
+        " else add database pointed to by environment
+    elseif $CSCOPE_DB != ""
+        cs add $CSCOPE_DB
+    endif
+    set csverb
+endif
+set cscopequickfix=s-,c-,d-,i-,t-,e-
+
+"映射代码美化函数到Shift+f快捷键
+
+" map <S-F> <Esc>:call CodeFormat()<CR>
+
+" command! ToggleNERDTreeAndTagbar call <SID>ToggleNERDTreeAndTagbar()
+"  function! <SID>ToggleNERDTreeAndTagbar()
+"      let w:jumpbacktohere = 1
+"      "Detect which plugins are open
+"      if exists('t:NERDTreeBufName')
+"          let nerdtree_open = bufwinnr(t:NERDTreeBufName) != -1
+"      else
+"          let nerdtree_open = 0
+"      endif
+"      let tagbar_open = bufwinnr('__Tagbar__') != -1
+
+"      " Perform the appropriate action
+"      if nerdtree_open && tagbar_open
+"          NERDTreeClose
+"          TagbarClose
+"      elseif nerdtree_open
+"          TagbarOpen
+"      elseif tagbar_open
+"          NERDTree
+"      else
+"          NERDTree
+"          TagbarOpen
+"      endif
+
+"      " Jump back to the original window
+"      for window in range(1, winnr('$'))
+"          execute window . 'wincmd w'
+"          if exists('w:jumpbacktohere')
+"              unlet w:jumpbacktohere
+"              break
+"          endif
+"      endfor
+"  endfunction
+"  nnoremap <leader>w :ToggleNERDTreeAndTagbar<CR>
+"  au BufWinEnter *.go silent loadview               
+
+"autocmd VimEnter * nested :TagbarOpen
+"autocmd VimEnter * nested :NERDTreeMirrorOpen
+"
+function! OpenRemote(host)
+    call inputsave()
+    let passwd = input('passwd:')
+    call inputrestore()
+    let g:netrw_list_cmd = 'sshpass -p openvino ssh '.a:host.' ls -Fa'
+    let g:netrw_scp_cmd = 'sshpass -p openvino scp '
+    let g:netrw_sftp_cmd= 'sshpass -p openvino sftp '
+    execute ":Nread scp://".a:host."//"
+endfunction
+:command! -nargs=1 OpenRemote :call OpenRemote(<q-args>)
+
+function! OpenWinRemote(host)
+    call inputsave()
+    let passwd = input('passwd:')
+    call inputrestore()
+    let g:netrw_list_cmd = 'c:\"Program Files"\PuTTY\plink.exe '.a:host.' -pw '.passwd.' ls '
+    let g:netrw_scp_cmd = 'c:\"Program Files"\PuTTY\pscp.exe '
+    let g:netrw_sftp_cmd= 'c:\"Program Files"\PuTTY\psftp.exe '
+    execute ":Nread scp://".a:host."/c:"
+endfunction
+
+:command! -nargs=1 OpenWinRemote :call OpenWinRemote(<q-args>)
+
+function! AddCscope()
+    call inputsave()
+    let name = input('Enter name: ')
+    call inputrestore()
+    let wcd = getcwd()
+    "let &makeprg = "C:/Users/yuanhu1/Downloads/program/spf13-vim-3/cscopemake.bat ".wcd." ".name
+    "execute "make"
+    "execute "cs add C:/Users/yuanhu1/Downloads/program/spf13-vim-3/~/cscope/".name."/cscope.out"
+    execute "silent !sh ~/cscopemake.sh ".wcd." ".name
+    execute "cs add ~/cscope/".name."/cscope.out"
+    cs reset
+endfunction
+
+function! AddGtag()
+    call inputsave()
+    let name = input('Enter name: ')
+    call inputrestore()
+    let wcd = getcwd()
+    set cscopeprg=gtags-cscope
+    execute "silent !sh ~/gtagsmake.sh ".wcd." ".name
+    set nocsverb
+    execute "cd ~/gtags/".name
+    execute "cs add ./GTAGS"
+    execute "cd ".wcd
+    set csverb
+endfunction
+
+let g:PROPATH = "~/program/"
+set cc=80
+set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
+hi SpecicalKey ctermfg=77 guifg=#654321
+" set invlist
+set nolist
+set clipboard=unnamed
+"set clipboard=unnamedplus
+
+" let g:dokuwiki_fenced_languages = ['c', 'python', 'html','java','c#']
+" let dokuwiki_comment=1
+let g:LargeFile=1
+
+"copy register
+"
+autocmd FocusGained * let @z=@+
+
+fun! RunCtrlP()
+  lcd %:p:h
+  cd %:p:h
+  if (getcwd() == $HOME)
+    echo "Can't run in \$HOME"
+    return
+  endif
+  CtrlP
+endfunc
+
+set tags+=./tags
+
+
+"keyboard map
+
+nnorema <Leader>ii  :e ~/.vimrc.local<CR>
+nnoremap <Leader>b :CtrlPBuffer <cr>
+nnoremap <Leader>p :CtrlP C:/Users/yuanhu1/Downloads/code/<cr>
+vmap <Leader><Leader>y "+y
+map <Leader><Leader>p "+p
+
+"nnoremap <leader>z3 <ESC>:call AddCscope()<CR>
+nnoremap <leader>z3 <ESC>:call AddGtag()<CR>
+nnoremap <leader>z4 <ESC>:set background=light<CR>colorscheme solarized<CR>
+nnoremap <leader>z5 :BcloseOthers<cr>  
+nnoremap <leader>z7 <ESC>:%s/\n\{2,\}/\r\r/<CR>
+nnoremap <leader>z9 :!rm -rf ~/.vimswap/*<CR>
+nmap <leader>z2 <ESC>:set equalprg=C:/Users/yuanhu1/Downloads/program/Vim/vim81/Astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xU\ -xg\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
+"nmap <leader>z2 <ESC>:set equalprg=astyle\ --style=linux\ -s4\ \ -m3\ -k3\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
+nmap <leader>z1 <ESC>:set equalprg=<CR>
+"map <F10> :!ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .<CR>:set tags+=./tags<CR>
+" map <F10> <C-W>h<C-W>h<C-W>h:vertical res 30<CR><C-W>l:vertical res 100<CR>
+" map <F11> <Leader>c<Space>
+"set equalprg=astyle\ --style=linux\ --indent=spaces=4\ -M80\ -m3\ -k2\ -p\ -j\ -d\ -H\ -U\ -E\ -S\ -c\ -w\ -Y\ -xe\ -xy\ -L
+
+"set equalprg=astyle
+"map <F12> <ESC>!astyle --style=linux --indent=spaces=4 -M80 -k1 -y --brackets=linux -d -H  -U -f -E -C -S -c -w<CR>
+"map <F12> <ESC>:'<,'>!astyle --style=linux -s4  -m3 -k2 -p -j -d -H -U -E -S -c -w -Y -xe -xy -L -xC80 --mode=c <CR>
+nnoremap <Leader>q :bd<cr>  
+nnoremap <Leader>1 :bn<cr>  
+nnoremap <Leader>2 :bp<cr>  
+nnoremap <Leader>3 :cn<cr>  
+nnoremap <Leader>4 :cp<cr>  
+nnoremap <Leader>5 :botright copen<CR>
+nnoremap <Leader>6 :ccl<CR>
+nnoremap <silent> <leader>sw "_yiw:s/\(\%#\w\+\)\(\W\+\)\(\w\+\)/\3\2\1/<cr><c-o>
+
+nnoremap <Leader>ts :cs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>tg :cs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>tc :cs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>tw :cs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>te :cs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>tf :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <Leader>ti :cs find i <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <Leader>td :cs find d <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>ph :set filetype=php
+nnoremap <Leader>ht :set filetype=html
+nnoremap <Leader>da :DoxAuthor<CR>
+nnoremap <Leader>df :Dox<CR>
+
+let g:pymode_python='python'
+
+
+let loaded_matchparen=1 " Don't load matchit.vim (paren/bracket matching)
+set noshowmatch         " Don't match parentheses/brackets
+set nocursorline        " Don't paint cursor line
+set nocursorcolumn      " Don't paint cursor column
+set lazyredraw          " Wait to redraw
+set scrolljump=8        " Scroll 8 lines at a time at bottom/top
+let html_no_rendering=1 " Don't render italic, bold, links in HTML
+
+set expandtab 
+if &background == "dark"     
+    let s:base03 = "NONE"     
+    let s:base02 = "NONE"     
+endif
+set t_Co=256
+set winfixwidth
+set foldmethod=syntax
+set foldlevel=3
+let g:termdebugger = "/usr/local/bin/x86_64-linux-gnu-gdb"
+set shell=/bin/bash
+let g:termdebug_popup = 0
+let g:termdebug_wide = 163
+

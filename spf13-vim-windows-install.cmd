@@ -15,8 +15,10 @@ REM    limitations under the License.
 
 @if not exist "%HOME%" @set HOME=%HOMEDRIVE%%HOMEPATH%
 @if not exist "%HOME%" @set HOME=%USERPROFILE%
-
+@set HOME="C:\Users\yuanhu1\Downloads\program\spf13-vim-3"
 @set APP_PATH=%HOME%\.spf13-vim-3
+echo %APP_PATH%
+echo %HOME%
 IF NOT EXIST "%APP_PATH%" (
     call git clone -b 3.0 https://github.com/spf13/spf13-vim.git "%APP_PATH%"
 ) ELSE (
@@ -32,8 +34,10 @@ call mklink "%HOME%\.vimrc" "%APP_PATH%\.vimrc"
 call mklink "%HOME%\_vimrc" "%APP_PATH%\.vimrc"
 call mklink "%HOME%\.vimrc.fork" "%APP_PATH%\.vimrc.fork"
 call mklink "%HOME%\.vimrc.bundles" "%APP_PATH%\.vimrc.bundles"
+call mklink "%HOME%\.vimrc.bundles.local" "%APP_PATH%\.vimrc.bundles.local"
 call mklink "%HOME%\.vimrc.bundles.fork" "%APP_PATH%\.vimrc.bundles.fork"
 call mklink "%HOME%\.vimrc.before" "%APP_PATH%\.vimrc.before"
+call mklink "%HOME%\.vimrc.local" "%APP_PATH%\.vimrc.local"
 call mklink "%HOME%\.vimrc.before.fork" "%APP_PATH%\.vimrc.before.fork"
 call mklink /J "%HOME%\.vim" "%APP_PATH%\.vim"
 
@@ -48,5 +52,6 @@ IF NOT EXIST "%HOME%/.vim/bundle/vundle" (
   call git pull
   call cd %HOME%
 )
+pause
 
-call vim -u "%APP_PATH%/.vimrc.bundles" +BundleInstall! +BundleClean +qall
+::call vim -u "%APP_PATH%/.vimrc.bundles" +BundleInstall! +BundleClean +qall

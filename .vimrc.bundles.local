@@ -1,0 +1,6 @@
+Bundle 'vim-scripts/a.vim'
+Bundle 'vim-scripts/DoxygenToolkit.vim'
+Bundle 'zhaocai/GoldenView.Vim'
+Bundle 'zenbro/mirror.Vim'
+Bundle 'skywind3000/asynctasks.vim'
+Bundle 'skywind3000/asyncrun.vim'

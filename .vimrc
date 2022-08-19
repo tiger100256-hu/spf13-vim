@@ -117,7 +117,7 @@
     " your .vimrc.before.local file:
     "   let g:spf13_no_autochdir = 1
     if !exists('g:spf13_no_autochdir')
-        autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" | lcd %:p:h | endif
+        "autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" | lcd %:p:h | endif
         " Always switch to the current file directory
     endif
 
