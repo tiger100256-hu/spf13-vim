@@ -23,6 +23,8 @@ let g:neocomplete#auto_complete_delay = 500
 "let g:EchoFuncKeyPrev=1
 set nobackup
 set background=dark
+"colorscheme CodeFactoryv3
+colorscheme gruvbox
 set nospell
 let s:temporary_directory = "C:/Users/yuanhu1/Downloads/tmp/"
 let g:ycm_confirm_extra_conf=0 
@@ -44,7 +46,6 @@ if has('gui_running')
    " set guifont=Lucida_Console:h16
    set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 16
 endif
-"colorscheme CodeFactoryv3
 set encoding=utf-8 fileencodings=ucs-bom,utf-8,cp936
 set guioptions-=m
 
