@@ -1,86 +1,105 @@
 "source ~/.vimrc.mswin
-"MAP <LEader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+"nerdtree
 "let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$','.*\.o$','.*_.*','.*\.orig$']
 let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$','.\.o$','\.out$','.\.orig$']
 let g:NERDTreeHijackNetrw=0
-let g:vimspector_install_gadgets = ['vscode-cpptools', 'CodeLLDB' ]
+let g:nerdtree_tabs_open_on_new_tab = 0  
 "let NERDTreeChDirMode=0
 let NERDTreeQuitOnOpen=1
-set wfh  
-set wfw 
-let g:indent_guides_enable_on_vim_startup = 0
+let g:NERDTreeWinSize=31
+
+
+"indent line
+let g:indent_guides_enable_on_vim_startup = 1
 hi IndentGuidesOdd  ctermbg=black
 hi IndentGuidesEven ctermbg=darkgrey
+
+"document
 let g:DoxygenToolkit_briefTag_pre="@Synopsis "
 let g:DoxygenToolkit_paramTag_pre="@Param "
 let g:DoxygenToolkit_returnTag="@Returns "
 let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
 let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
 let g:DoxygenToolkit_authorName="huyuan"
-let g:neocomplete#auto_complete_delay = 500
 
-"let g:EchoFuncKeyNext=1
-"let g:EchoFuncKeyPrev=1
-set nobackup
-set background=dark
-"colorscheme CodeFactoryv3
-colorscheme gruvbox
-set nospell
-let s:temporary_directory = "C:/Users/yuanhu1/Downloads/tmp/"
+"complete
+let g:neocomplete#auto_complete_delay = 500
+autocmd Filetype c set omnifunc=ccomplete#Complete
+"MAP <LEader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 let g:ycm_confirm_extra_conf=0 
 let g:ycm_seed_identifiers_with_syntax = 1
+"let g:EchoFuncKeyNext=1
+"let g:EchoFuncKeyPrev=1
+"
+"let s:temporary_directory = "C:/Users/yuanhu1/Downloads/tmp/"
 
 "set async task
 let g:asyncrun_open = 6
 let g:asynctasks_term_pos = 'tab'
 
-"set netrw
-let g:netrw_winsize = 25
-let g:netrw_browse_split = 4
-let g:netrw_cygwin=1
+function! CompleteWords(ArgLead, CmdLine, ...)
+    return getline(1, '$')->join(' ')->split('\s\+')
+                \ ->filter({_,x->match(x, '^\h\w\+$') > -1})
+                \ ->filter({_,x->match(x, '^' . a:CmdLine) > -1})
+                \ ->sort()->uniq()
+endfunction
 
+"vimspector debug
+let g:vimspector_install_gadgets = ['vscode-cpptools', 'CodeLLDB' ]
+
+"Debug break with function
+function! Vbf()
+    call inputsave()
+    let functionName = input('Enter function: ')
+    call inputrestore()
+    execute "call vimspector#AddFunctionBreakpoint('".functionName."')"
+endfunction
+
+"lauch debug session
+function! VDS()
+    :NERDTreeClose
+	:TagbarClose
+	call vimspector#Launch()
+endfunction
+
+
+nnoremap <leader>v1 :packadd vimspector <cr>
+nnoremap <leader>v2 :call vimspector#Pause() <cr>
+nnoremap <leader>vc :call vimspector#Continue() <cr>
+nnoremap <leader>vs :call vimspector#Stop() <cr>
+nnoremap <leader>vn :call vimspector#StepOver() <cr>
+nnoremap <leader>vi :call vimspector#StepInto() <cr>
+nnoremap <leader>vo :call vimspector#StepOut() <cr>
+nnoremap <leader>vl :call VDS() <cr>
+nnoremap <leader>vr :call vimspector#Restart() <cr>
+nnoremap <leader>vq :VimspectorReset <cr>
+nnoremap <leader>vbl :call vimspector#ListBreakpoints() <cr>
+nnoremap <leader>vbt :call vimspector#ToggleBreakpoint() <cr>
+nnoremap <leader>vfu :call vimspector#UpFrame() <cr>
+nnoremap <leader>vfd :call vimspector#DownFrame() <cr>
+nnoremap <leader>vjn :call vimspector#JumpToNextBreakpoint() <cr>
+nnoremap <leader>vjp :call vimspector#JumpToPreviousBreakpoint() <cr>
+nnoremap <leader>vjc:call vimspector#RunToCursor() <cr>
+nnoremap <leader>vjl:call vimspector#GoToCurrentLine() <cr>
+nnoremap <leader>vjp:call vimspector#JumpToProgramCounter() <cr>
+nnoremap <leader>vbb :call vimspector#ToggleAdvancedBreakpoint() <cr>
+nnoremap <leader>vbf :call Vbf() <cr>
 set nocompatible
 
-autocmd Filetype c set omnifunc=ccomplete#Complete
+"colorscheme CodeFactoryv3
+set background=dark
+"gui option
 if has('gui_running')
-   " set guifont=Lucida_Console:h16
-   set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 16
+    " set guifont=Lucida_Console:h16
+    set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 16
+    set guioptions-=m
 endif
-set encoding=utf-8 fileencodings=ucs-bom,utf-8,cp936
-set guioptions-=m
 
-command! BcloseOthers call <SID>BufCloseOthers()  
-function! <SID>BufCloseOthers()  
-   let l:currentBufNum   = bufnr("%")  
-   let l:alternateBufNum = bufnr("#")  
-   for i in range(1,bufnr("$"))  
-     if buflisted(i)  
-       if i!=l:currentBufNum  
-         execute("bdelete ".i)
-       endif  
-     endif  
-   endfor  
-endfunction  
+"encodeing
+set encoding=utf-8 fileencodings=ucs-bom,utf-8,cp936
 
 ""source ~/.vimrc.cscope
-if has("cscope")
-    set nocsre
-    "set csprg=C:\Users\yuanhu1\Downloads\program\Vim\vim81\cscope.exe
-    set csprg=/usr/bin/cscope
-    "set csprg=/user/local/bin/gtags-cscope.exe
-    set csto=1
-    set cst
-    set nocsverb
-    " add any database in current directory
-    if filereadable("cscope.out")
-        cs add cscope.out
-        " else add database pointed to by environment
-    elseif $CSCOPE_DB != ""
-        cs add $CSCOPE_DB
-    endif
-    set csverb
-endif
-set cscopequickfix=s-,c-,d-,i-,t-,e-
 
 "映射代码美化函数到Shift+f快捷键
 
@@ -124,7 +143,12 @@ set cscopequickfix=s-,c-,d-,i-,t-,e-
 
 "autocmd VimEnter * nested :TagbarOpen
 "autocmd VimEnter * nested :NERDTreeMirrorOpen
-"
+
+"set netrw
+let g:netrw_winsize = 25
+let g:netrw_browse_split = 4
+let g:netrw_cygwin=1
+
 function! OpenRemote(host)
     call inputsave()
     let passwd = input('passwd:')
@@ -145,44 +169,7 @@ function! OpenWinRemote(host)
     let g:netrw_sftp_cmd= 'c:\"Program Files"\PuTTY\psftp.exe '
     execute ":Nread scp://".a:host."/c:"
 endfunction
-
 :command! -nargs=1 OpenWinRemote :call OpenWinRemote(<q-args>)
-
-function! AddCscope()
-    call inputsave()
-    let name = input('Enter name: ')
-    call inputrestore()
-    let wcd = getcwd()
-    "let &makeprg = "C:/Users/yuanhu1/Downloads/program/spf13-vim-3/cscopemake.bat ".wcd." ".name
-    "execute "make"
-    "execute "cs add C:/Users/yuanhu1/Downloads/program/spf13-vim-3/~/cscope/".name."/cscope.out"
-    execute "silent !sh ~/cscopemake.sh ".wcd." ".name
-    execute "cs add ~/cscope/".name."/cscope.out"
-    cs reset
-endfunction
-
-function! AddGtag()
-    call inputsave()
-    let name = input('Enter name: ')
-    call inputrestore()
-    let wcd = getcwd()
-    set cscopeprg=gtags-cscope
-    execute "silent !sh ~/gtagsmake.sh ".wcd." ".name
-    set nocsverb
-    execute "cd ~/gtags/".name
-    execute "cs add ./GTAGS"
-    execute "cd ".wcd
-    set csverb
-endfunction
-
-let g:PROPATH = "~/program/"
-set cc=80
-set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
-hi SpecicalKey ctermfg=77 guifg=#654321
-" set invlist
-set nolist
-set clipboard=unnamed
-"set clipboard=unnamedplus
 
 " let g:dokuwiki_fenced_languages = ['c', 'python', 'html','java','c#']
 " let dokuwiki_comment=1
@@ -192,36 +179,59 @@ let g:LargeFile=1
 "
 autocmd FocusGained * let @z=@+
 
-fun! RunCtrlP()
-  lcd %:p:h
-  cd %:p:h
-  if (getcwd() == $HOME)
-    echo "Can't run in \$HOME"
-    return
-  endif
-  CtrlP
-endfunc
-
-set tags+=./tags
-
-
 "keyboard map
 
 nnorema <Leader>ii  :e ~/.vimrc.local<CR>
-nnoremap <Leader>b :CtrlPBuffer <cr>
-nnoremap <Leader>p :CtrlP C:/Users/yuanhu1/Downloads/code/<cr>
+
+"copy for clipboard
+set clipboard=unnamed
+"set clipboard=unnamedplus
 vmap <Leader><Leader>y "+y
 map <Leader><Leader>p "+p
 
-"nnoremap <leader>z3 <ESC>:call AddCscope()<CR>
-nnoremap <leader>z3 <ESC>:call AddGtag()<CR>
-nnoremap <leader>z4 <ESC>:set background=light<CR>colorscheme solarized<CR>
-nnoremap <leader>z5 :BcloseOthers<cr>  
-nnoremap <leader>z7 <ESC>:%s/\n\{2,\}/\r\r/<CR>
-nnoremap <leader>z9 :!rm -rf ~/.vimswap/*<CR>
-nmap <leader>z2 <ESC>:set equalprg=C:/Users/yuanhu1/Downloads/program/Vim/vim81/Astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xU\ -xg\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
+"nnoremap <leader>z4 <ESC>:set background=light<CR>colorscheme solarized<CR>
+"nnoremap <leader>z9 :!rm -rf ~/.vimswap/*<CR>
+
+"format
+nmap <leader>f1 <ESC>:set equalprg=<CR>
+nmap <leader>f2 <ESC>:set equalprg=C:/Users/yuanhu1/Downloads/program/Vim/vim81/Astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xU\ -xg\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
+nnoremap <leader>f3 <ESC>:%s/\n\{2,\}/\r\r/<CR>
+
+function! CusFilePathsCompletion(ArgLead, CmdLine, CursorPos)
+       let curret_dir =fnamemodify(a:ArgLead, ':p:h')
+       let myList = split(globpath(curret_dir,  '*'), '\n')
+       return filter(myList, 'v:val =~ "^'. a:ArgLead .'"')
+endfunction
+
+"file
+let g:PROPATH = ""
+fun! CDCodePath()
+    if g:PROPATH == ""
+        call inputsave()
+        let g:PROPATH = input('rode root cdir: ','','customlist,CusFilePathsCompletion')
+        call inputrestore()
+        if ! isdirectory(g:PROPATH)
+            echo 'code root dir is not exist: '.g:PROPATH
+            let g:PROPATH = ""
+            return 1
+        endif
+    endif
+    exec "lcd ".g:PROPATH
+    return 0
+endfunc
+
+fun! RunCtrlP()
+    if CDCodePath() == 0
+        CtrlP
+    endif
+endfunc
+
+nnoremap <Leader>pp :call CDCodePath()<cr>
+nnoremap <Leader>pf :lcd %:p:h <cr>
+nnoremap <leader>f5 :CtrlPMRUFiles<CR>
+nnoremap <leader>fp :call RunCtrlP()<CR>
+
 "nmap <leader>z2 <ESC>:set equalprg=astyle\ --style=linux\ -s4\ \ -m3\ -k3\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
-nmap <leader>z1 <ESC>:set equalprg=<CR>
 "map <F10> :!ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .<CR>:set tags+=./tags<CR>
 " map <F10> <C-W>h<C-W>h<C-W>h:vertical res 30<CR><C-W>l:vertical res 100<CR>
 " map <F11> <Leader>c<Space>
@@ -230,15 +240,94 @@ nmap <leader>z1 <ESC>:set equalprg=<CR>
 "set equalprg=astyle
 "map <F12> <ESC>!astyle --style=linux --indent=spaces=4 -M80 -k1 -y --brackets=linux -d -H  -U -f -E -C -S -c -w<CR>
 "map <F12> <ESC>:'<,'>!astyle --style=linux -s4  -m3 -k2 -p -j -d -H -U -E -S -c -w -Y -xe -xy -L -xC80 --mode=c <CR>
-nnoremap <Leader>q :bd<cr>  
-nnoremap <Leader>1 :bn<cr>  
-nnoremap <Leader>2 :bp<cr>  
-nnoremap <Leader>3 :cn<cr>  
-nnoremap <Leader>4 :cp<cr>  
-nnoremap <Leader>5 :botright copen<CR>
-nnoremap <Leader>6 :ccl<CR>
+
+"quickfix
+nnoremap <Leader>c1 :cnext<cr>  
+nnoremap <Leader>c2 :cprevious<cr>  
+nnoremap <Leader>c3 :cnew<cr>  
+nnoremap <Leader>c4 :col<cr>  
+nnoremap <Leader>c5 :botright copen<CR>
+nnoremap <Leader>c6 :ccl<CR>
+
+"buffers
+command! BcloseOthers call <SID>BufCloseOthers()  
+function! <SID>BufCloseOthers()  
+    let l:currentBufNum   = bufnr("%")  
+    let l:alternateBufNum = bufnr("#")  
+    for i in range(1,bufnr("$"))  
+        if buflisted(i)  
+            if i!=l:currentBufNum  
+                execute("bdelete! ".i)
+            endif  
+        endif  
+    endfor  
+endfunction  
+
+nnoremap <Leader>b1 :bn<cr>  
+nnoremap <Leader>b2 :bp<cr>  
+nnoremap <Leader>b5 :CtrlPBuffer <cr>
+nnoremap <Leader>b6 :bd<cr>  
+nnoremap <Leader>bq :bde!<cr>  
+nnoremap <leader>b7 :BcloseOthers<cr>  
+nnoremap <Leader>bt :CtrlPFunky <cr>
 nnoremap <silent> <leader>sw "_yiw:s/\(\%#\w\+\)\(\W\+\)\(\w\+\)/\3\2\1/<cr><c-o>
 
+"cscope
+if has("cscope")
+    set nocsre
+    "set csprg=C:\Users\yuanhu1\Downloads\program\Vim\vim81\cscope.exe
+    set csprg=/usr/bin/cscope
+    "set csprg=/user/local/bin/gtags-cscope.exe
+    set csto=1
+    set cst
+    set nocsverb
+    " add any database in current directory
+    if filereadable("cscope.out")
+        cs add cscope.out
+        " else add database pointed to by environment
+    elseif $CSCOPE_DB != ""
+        cs add $CSCOPE_DB
+    endif
+    set csverb
+endif
+set cscopequickfix=s-,g-,c-,d-,i-,t-,e-,f-,a-
+
+function! AddCscope()
+    if CDCodePath() != 0
+        return 1
+    endif
+    call inputsave()
+    let name = input('Enter project name: ')
+    call inputrestore()
+
+    let wcd = g:PROPATH
+    "let &makeprg = "C:/Users/yuanhu1/Downloads/program/spf13-vim-3/cscopemake.bat ".wcd." ".name
+    "execute "make"
+    "execute "cs add C:/Users/yuanhu1/Downloads/program/spf13-vim-3/~/cscope/".name."/cscope.out"
+    execute "silent !sh ~/cscopemake.sh ".wcd." ".name
+    execute "cs add ~/cscope/".name."/cscope.out"
+    cs reset
+endfunction
+
+function! AddGtag()
+    if CDCodePath() != 0
+        return 1
+    endif
+    call inputsave()
+    let name = input('Enter project name: ')
+    call inputrestore()
+    let wcd = g:PROPATH
+    set cscopeprg=gtags-cscope
+    execute "silent !sh ~/gtagsmake.sh ".wcd." ".name
+    set nocsverb
+    execute "cd ~/gtags/".name
+    execute "cs add ./GTAGS"
+    execute "cd ".wcd
+    set csverb
+endfunction
+
+"nnoremap <leader>t3 <ESC>:call AddCscope()<CR>
+nnoremap <leader>t3 <ESC>:call AddGtag()<CR>
 nnoremap <Leader>ts :cs find s <C-R>=expand("<cword>")<CR><CR>
 nnoremap <Leader>tg :cs find g <C-R>=expand("<cword>")<CR><CR>
 nnoremap <Leader>tc :cs find c <C-R>=expand("<cword>")<CR><CR>
@@ -247,13 +336,17 @@ nnoremap <Leader>te :cs find e <C-R>=expand("<cword>")<CR><CR>
 nnoremap <Leader>tf :cs find f <C-R>=expand("<cfile>")<CR><CR>
 nnoremap <Leader>ti :cs find i <C-R>=expand("<cfile>")<CR><CR>
 nnoremap <Leader>td :cs find d <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>ph :set filetype=php
-nnoremap <Leader>ht :set filetype=html
-nnoremap <Leader>da :DoxAuthor<CR>
-nnoremap <Leader>df :Dox<CR>
 
+"nnoremap <Leader>ph :set filetype=php
+"nnoremap <Leader>ht :set filetype=html
+"nnoremap <Leader>da :DoxAuthor<CR>
+"nnoremap <Leader>df :Dox<CR>
 let g:pymode_python='python'
 
+" termdebug
+let g:termdebugger = "/usr/local/bin/x86_64-linux-gnu-gdb"
+let g:termdebug_popup = 0
+let g:termdebug_wide = 163
 
 let loaded_matchparen=1 " Don't load matchit.vim (paren/bracket matching)
 set noshowmatch         " Don't match parentheses/brackets
@@ -262,18 +355,24 @@ set nocursorcolumn      " Don't paint cursor column
 set lazyredraw          " Wait to redraw
 set scrolljump=8        " Scroll 8 lines at a time at bottom/top
 let html_no_rendering=1 " Don't render italic, bold, links in HTML
-
 set expandtab 
 if &background == "dark"     
     let s:base03 = "NONE"     
     let s:base02 = "NONE"     
 endif
 set t_Co=256
-set winfixwidth
 set foldmethod=syntax
 set foldlevel=3
-let g:termdebugger = "/usr/local/bin/x86_64-linux-gnu-gdb"
 set shell=/bin/bash
-let g:termdebug_popup = 0
-let g:termdebug_wide = 163
+set cc=80
+set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
+hi SpecicalKey ctermfg=77 guifg=#654321
+set nobackup
+set nospell
+" set invlist
+set nolist
+set showcmd
+"set windows size fix
+set wfh  
+set wfw 
 
