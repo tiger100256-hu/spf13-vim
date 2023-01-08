@@ -94,6 +94,7 @@ if has('gui_running')
     " set guifont=Lucida_Console:h16
     set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 16
     set guioptions-=m
+    set guioptions-=a
 endif
 
 "encodeing
@@ -304,7 +305,7 @@ function! AddCscope()
     "let &makeprg = "C:/Users/yuanhu1/Downloads/program/spf13-vim-3/cscopemake.bat ".wcd." ".name
     "execute "make"
     "execute "cs add C:/Users/yuanhu1/Downloads/program/spf13-vim-3/~/cscope/".name."/cscope.out"
-    execute "silent !sh ~/cscopemake.sh ".wcd." ".name
+    execute "silent !sh ~/cscopemake.sh ".wcd." ".name." > ~/cscope.log"
     execute "cs add ~/cscope/".name."/cscope.out"
     cs reset
 endfunction
@@ -322,20 +323,23 @@ function! AddGtag()
     set nocsverb
     execute "cd ~/gtags/".name
     execute "cs add ./GTAGS"
+    execute "cs add ./GPATH"
+    execute "cs add ./GRTAGS"
     execute "cd ".wcd
     set csverb
 endfunction
 
 "nnoremap <leader>t3 <ESC>:call AddCscope()<CR>
 nnoremap <leader>t3 <ESC>:call AddGtag()<CR>
-nnoremap <Leader>ts :cs find s <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>tg :cs find g <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>tc :cs find c <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>tw :cs find t <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>te :cs find e <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>tf :cs find f <C-R>=expand("<cfile>")<CR><CR>
-nnoremap <Leader>ti :cs find i <C-R>=expand("<cfile>")<CR><CR>
-nnoremap <Leader>td :cs find d <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>ts :scs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>tg :scs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>tc :scs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>tw :scs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>te :scs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>tf :scs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <Leader>ti :scs find i <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <Leader>td :scs find d <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>ta :scs find a <C-R>=expand("<cword>")<CR><CR>
 
 "nnoremap <Leader>ph :set filetype=php
 "nnoremap <Leader>ht :set filetype=html
@@ -356,6 +360,9 @@ set lazyredraw          " Wait to redraw
 set scrolljump=8        " Scroll 8 lines at a time at bottom/top
 let html_no_rendering=1 " Don't render italic, bold, links in HTML
 set expandtab 
+set tabstop=4 
+set shiftwidth=4
+set smartindent
 if &background == "dark"     
     let s:base03 = "NONE"     
     let s:base02 = "NONE"     
