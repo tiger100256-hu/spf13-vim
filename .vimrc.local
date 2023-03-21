@@ -33,6 +33,15 @@ let g:ycm_seed_identifiers_with_syntax = 1
 "let g:EchoFuncKeyPrev=1
 "
 "let s:temporary_directory = "C:/Users/yuanhu1/Downloads/tmp/"
+"terminl color
+let g:terminal_ansi_colors = [
+  \'#282828', '#CC241D', '#98971A', '#D79921',
+  \'#458588', '#B16286', '#689D6A', '#D65D0E',
+  \'#fb4934', '#b8bb26', '#fabd2f', '#83a598',
+  \'#d3869b', '#8ec07c', '#fe8019', '#FBF1C7' ]
+
+highlight Terminal guibg='#282828'
+highlight Terminal guifg='#ebdbb2'
 
 "set async task
 let g:asyncrun_open = 6
@@ -195,7 +204,8 @@ map <Leader><Leader>p "+p
 
 "format
 nmap <leader>f1 <ESC>:set equalprg=<CR>
-nmap <leader>f2 <ESC>:set equalprg=C:/Users/yuanhu1/Downloads/program/Vim/vim81/Astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xU\ -xg\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
+"nmap <leader>f2 <ESC>:set equalprg=astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xU\ -xg\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
+nmap <leader>f2 <ESC>:set equalprg=astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xg\ -xe\ -xy\ -L\ -xC120\ --mode=c<CR>
 nnoremap <leader>f3 <ESC>:%s/\n\{2,\}/\r\r/<CR>
 
 function! CusFilePathsCompletion(ArgLead, CmdLine, CursorPos)
@@ -231,6 +241,10 @@ nnoremap <Leader>pp :call CDCodePath()<cr>
 nnoremap <Leader>pf :lcd %:p:h <cr>
 nnoremap <leader>f5 :CtrlPMRUFiles<CR>
 nnoremap <leader>fp :call RunCtrlP()<CR>
+nnoremap <leader>yf :let @" = expand("%:t")<cr>
+nnoremap <leader>yp :let @" = expand("%:p")<cr>
+nnoremap <leader>yr :let @" = expand("%")<cr>
+nnoremap <leader>yw :let @" = "wget --no-proxy --auth-no-challenge --http-user=openvino --http-password=openvino"<cr>
 
 "nmap <leader>z2 <ESC>:set equalprg=astyle\ --style=linux\ -s4\ \ -m3\ -k3\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
 "map <F10> :!ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .<CR>:set tags+=./tags<CR>
@@ -382,4 +396,13 @@ set showcmd
 "set windows size fix
 set wfh  
 set wfw 
+
+"gloden view
+let g:goldenview__enable_at_startup = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_check_on_open = 0
+let g:syntastic_cpp_compiler = "g++"
+let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic"
+let g:syntastic_cpp_config_file = '~/.syntastic_cpp_config'
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': []  }
 
