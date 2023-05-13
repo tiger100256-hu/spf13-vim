@@ -193,11 +193,36 @@ autocmd FocusGained * let @z=@+
 
 nnorema <Leader>ii  :e ~/.vimrc.local<CR>
 
+set paste
+" clipboard
 "copy for clipboard
 set clipboard=unnamed
 "set clipboard=unnamedplus
+
+" copy from terminal and tmux
+" terminal need support OSC 52 and tmux need set 
+" https://github.com/tmux/tmux/wiki/Clipboard#terminal-support---tmux-inside-tmux
+" echo $TERM
+" tmux -V
+" add below config in out and inner tmux config ~/.tmux.conf
+" set -s set-clipboard on
+" if tmux version >=3.2
+" set -as terminal-features ',$TERM_NAME:clipboard'
+" if tmux version <3.2
+" set -as terminal-overrides ',$TERM_NAME:Ms=\E]52;%p1%s;%p2%s\007'
+
+" tmux info|grep Ms: should get string
+" If tmux is run inside tmux, the inner tmux's outside terminal is tmux:
+"     set-clipboard and Ms must be configured for the inner tmux as for any other terminal. TERM will be screen or screen-256color or tmux or tmux-256color.
+"     The outer tmux must have set-clipboard set to on rather than external and it must be configured with Ms for its outside terminal, whatever that is.
+"     The outside terminal must have OSC 52 enabled. 
+nmap <leader>osc <Plug>OSCYankOperator
+nmap <leader>yy <leader>osc_
+vmap <leader>yy <Plug>OSCYankVisual
+
+" copy with local clipborad
+nmap <Leader><Leader>p "+p
 vmap <Leader><Leader>y "+y
-map <Leader><Leader>p "+p
 
 "nnoremap <leader>z4 <ESC>:set background=light<CR>colorscheme solarized<CR>
 "nnoremap <leader>z9 :!rm -rf ~/.vimswap/*<CR>
@@ -214,18 +239,27 @@ function! CusFilePathsCompletion(ArgLead, CmdLine, CursorPos)
        return filter(myList, 'v:val =~ "^'. a:ArgLead .'"')
 endfunction
 
-"file
+"code root dir
 let g:PROPATH = ""
+"remote build env
+let g:COMPILE_ENV = ""
 fun! CDCodePath()
     if g:PROPATH == ""
         call inputsave()
         let g:PROPATH = input('rode root cdir: ','','customlist,CusFilePathsCompletion')
         call inputrestore()
+        if g:PROPATH == ""
+			let	g:PROPATH = "/home/build/openvino"
+        endif
         if ! isdirectory(g:PROPATH)
             echo 'code root dir is not exist: '.g:PROPATH
             let g:PROPATH = ""
             return 1
         endif
+        let g:COMPILE_ENV = input('COMPILE_ENV: ','','customlist,CusFilePathsCompletion')
+    endif
+    if g:COMPILE_ENV == ""
+        let g:COMPILE_ENV = input('COMPILE_ENV: ','','remote build env(18,20,c8)')
     endif
     exec "lcd ".g:PROPATH
     return 0
@@ -405,4 +439,30 @@ let g:syntastic_cpp_compiler = "g++"
 let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic"
 let g:syntastic_cpp_config_file = '~/.syntastic_cpp_config'
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': []  }
+
+
+"remote build
+function! SyncCode()
+    if g:COMPILE_ENV == ""
+	   call CDCodePath()
+    endif
+    let cenv = g:COMPILE_ENV	
+    execute "MirrorPush ".cenv
+endfunction
+:command! -nargs=0 SyncCode :call SyncCode()
+
+function! RemoteCompile(command)
+    if g:COMPILE_ENV == ""
+	   call CDCodePath()
+    endif
+    let cenv = g:COMPILE_ENV	
+    execute "AsyncTask ".a:command." -os=".cenv
+endfunction
+:command! -nargs=1 RemoteCompile :call RemoteCompile(<q-args>)
+
+nnoremap <Leader>a1 :w<cr>:SyncCode<cr>  
+nnoremap <Leader>ab :RemoteCompile ov_remote_linux_build<cr>  
+nnoremap <Leader>ad :RemoteCompile ov_remote_linux_clean<cr>  
+nnoremap <Leader>as :RemoteCompile ov_remote_linux_sync<cr>  
+nnoremap <Leader>ac :RemoteCompile ov_remote_linux_config<cr>  
 
