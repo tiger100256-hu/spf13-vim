@@ -3,11 +3,11 @@
 "nerdtree
 "let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$','.*\.o$','.*_.*','.*\.orig$']
 let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$','.\.o$','\.out$','.\.orig$']
-let g:NERDTreeHijackNetrw=0
-let g:nerdtree_tabs_open_on_new_tab = 0  
-"let NERDTreeChDirMode=0
-let NERDTreeQuitOnOpen=1
-let g:NERDTreeWinSize=31
+"let g:NERDTreeHijackNetrw=0
+"let g:nerdtree_tabs_open_on_new_tab = 0  
+""let NERDTreeChDirMode=0
+"let NERDTreeQuitOnOpen=1
+let g:NERDTreeWinSize=20
 
 
 "indent line
@@ -16,11 +16,11 @@ hi IndentGuidesOdd  ctermbg=black
 hi IndentGuidesEven ctermbg=darkgrey
 
 "document
-let g:DoxygenToolkit_briefTag_pre="@Synopsis "
-let g:DoxygenToolkit_paramTag_pre="@Param "
-let g:DoxygenToolkit_returnTag="@Returns "
-let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
-let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
+let g:DoxygenToolkit_briefTag_pre="@brief "
+let g:DoxygenToolkit_paramTag_pre="@param "
+let g:DoxygenToolkit_returnTag="@returns "
+"let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
+"let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
 let g:DoxygenToolkit_authorName="huyuan"
 
 "complete
@@ -29,6 +29,7 @@ autocmd Filetype c set omnifunc=ccomplete#Complete
 "MAP <LEader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 let g:ycm_confirm_extra_conf=0 
 let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_always_populate_location_list = 1
 "let g:EchoFuncKeyNext=1
 "let g:EchoFuncKeyPrev=1
 "
@@ -115,41 +116,112 @@ set encoding=utf-8 fileencodings=ucs-bom,utf-8,cp936
 
 " map <S-F> <Esc>:call CodeFormat()<CR>
 
-" command! ToggleNERDTreeAndTagbar call <SID>ToggleNERDTreeAndTagbar()
-"  function! <SID>ToggleNERDTreeAndTagbar()
-"      let w:jumpbacktohere = 1
-"      "Detect which plugins are open
-"      if exists('t:NERDTreeBufName')
-"          let nerdtree_open = bufwinnr(t:NERDTreeBufName) != -1
-"      else
-"          let nerdtree_open = 0
-"      endif
-"      let tagbar_open = bufwinnr('__Tagbar__') != -1
 
-"      " Perform the appropriate action
-"      if nerdtree_open && tagbar_open
-"          NERDTreeClose
-"          TagbarClose
-"      elseif nerdtree_open
-"          TagbarOpen
-"      elseif tagbar_open
-"          NERDTree
-"      else
-"          NERDTree
-"          TagbarOpen
-"      endif
+"command! ToggleNERDTreeAndTagbar call <SID>ToggleNERDTreeAndTagbar()
+"function! <SID>ToggleNERDTreeAndTagbar()
+"    let w:jumpbacktohere = 1
+"    "Detect which plugins are open
+"    if exists('t:NERDTreeBufName')
+"        let nerdtree_open = bufwinnr(t:NERDTreeBufName) != -1
+"    else
+"        let nerdtree_open = 0
+"    endif
+"    let tagbar_open = bufwinnr('__Tagbar__') != -1
+"
+"    " Perform the appropriate action
+"    "if nerdtree_open && tagbar_open
+"    "    NERDTreeClose
+"    "    TagbarClose
+"    "elseif nerdtree_open
+"    "    TagbarOpen
+"    "elseif tagbar_open
+"    "    NERDTree
+"    "    execute ":vertical resize 20"
+"    "else
+"    "    TagbarOpen
+"    "    NERDTree
+"    "    execute ":vertical resize 20"
+"    "endif
+"    NERDTreeClose
+"    TagbarClose
+"    TagbarOpen
+"    NERDTree
+"    execute ":vertical resize 20"
+"
+"    " Jump back to the original window
+"    for window in range(1, winnr('$'))
+"        execute window . 'wincmd w'
+"        if exists('w:jumpbacktohere')
+"            unlet w:jumpbacktohere
+"            break
+"        endif
+"    endfor
+"    execute ":vertical resize 80"
+"endfunction
+"nnoremap <leader>w :ToggleNERDTreeAndTagbar<CR>
 
-"      " Jump back to the original window
-"      for window in range(1, winnr('$'))
-"          execute window . 'wincmd w'
-"          if exists('w:jumpbacktohere')
-"              unlet w:jumpbacktohere
-"              break
-"          endif
-"      endfor
-"  endfunction
-"  nnoremap <leader>w :ToggleNERDTreeAndTagbar<CR>
-"  au BufWinEnter *.go silent loadview               
+"map <C-e> :NERDTreeToggle<CR>:ReloadView<CR>:ReloadView<CR>
+map <C-e> :NERDTreeToggle<CR>
+nmap <leader>nt :NERDTreeFind<CR>:ReloadView<CR>
+nmap <leader>w :ReloadView<CR>
+
+command! ReloadView call <SID>ReloadView()
+function! <SID>ReloadView()
+"    let win_num = winnr('$')
+"    let nerd_size = 25
+"    let main_size = 120
+"    let tagbar_size = 120
+"    if win_num == 2 
+"       let main_size = 100
+"    elseif win_num == 3
+"       let main_size = 80
+"    elseif win_num == 1
+"        return
+"    endif
+"    if exists('t:NERDTreeBufName')
+"        let nerdtree_open = bufwinnr(t:NERDTreeBufName) != -1
+"    else
+"        let nerdtree_open = 0
+"    endif
+
+
+    " Jump back to the original window
+    "for window in range(1, winnr('$'))
+    "    execute window . 'wincmd w'
+    "    let w:bufername = bufname('%')
+    "    if stridx(w:bufername, "NERD_tree") >= 0  
+    "        execute ":vertical resize ".nerd_size
+    "    elseif stridx(w:bufername, "__Tagbar__") >= 0
+    "        if !nerdtree_open
+    "            execute ":vertical resize ".tagbar_size
+    "    else 
+    "        execute ":vertical resize ".main_size
+    "    endif
+    "endfor
+    let nerd_size = 20
+    let w:jumpbacktohere = 1
+    for window in range(1, winnr('$'))
+        execute window . 'wincmd w'
+        execute ":GoldenViewResize"
+    endfor
+    for window in range(1, winnr('$'))
+        let w:bufername = bufname('%')
+        if stridx(w:bufername, "NERD_tree") >= 0  
+            execute ":vertical resize ".nerd_size
+        endif
+    endfor
+
+         
+    for window in range(1, winnr('$'))
+        execute window . 'wincmd w'
+        if exists('w:jumpbacktohere')
+            unlet w:jumpbacktohere
+            break
+        endif
+    endfor
+endfunction
+
+"au BufWinEnter * silent :ReloadView               
 
 "autocmd VimEnter * nested :TagbarOpen
 "autocmd VimEnter * nested :NERDTreeMirrorOpen
@@ -230,7 +302,8 @@ vmap <Leader><Leader>y "+y
 "format
 nmap <leader>f1 <ESC>:set equalprg=<CR>
 "nmap <leader>f2 <ESC>:set equalprg=astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xU\ -xg\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
-nmap <leader>f2 <ESC>:set equalprg=astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xg\ -xe\ -xy\ -L\ -xC120\ --mode=c<CR>
+"nmap <leader>f2 <ESC>:set equalprg=astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xg\ -xe\ -xy\ -L\ -xC120\ --mode=c<CR>
+nmap <leader>f2 <ESC>:set equalprg=astyle\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xg\ -xe\ -xy\ -L\ -xC120\ --mode=c<CR>
 nnoremap <leader>f3 <ESC>:%s/\n\{2,\}/\r\r/<CR>
 
 function! CusFilePathsCompletion(ArgLead, CmdLine, CursorPos)
@@ -256,10 +329,11 @@ fun! CDCodePath()
             let g:PROPATH = ""
             return 1
         endif
-        let g:COMPILE_ENV = input('COMPILE_ENV: ','','customlist,CusFilePathsCompletion')
     endif
     if g:COMPILE_ENV == ""
-        let g:COMPILE_ENV = input('COMPILE_ENV: ','','remote build env(18,20,c8)')
+        call inputsave()
+        let g:COMPILE_ENV = input('COMPILE_ENV: ','','customlist,CusFilePathsCompletion')
+        call inputrestore()
     endif
     exec "lcd ".g:PROPATH
     return 0
@@ -279,6 +353,10 @@ nnoremap <leader>yf :let @" = expand("%:t")<cr>
 nnoremap <leader>yp :let @" = expand("%:p")<cr>
 nnoremap <leader>yr :let @" = expand("%")<cr>
 nnoremap <leader>yw :let @" = "wget --no-proxy --auth-no-challenge --http-user=openvino --http-password=openvino"<cr>
+"ycm search 
+nnoremap <leader>yi    :YcmCompleter GoToInclude<CR>
+nnoremap <leader>yd    :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>yg    :YcmCompleter GoToDefinition<CR>
 
 "nmap <leader>z2 <ESC>:set equalprg=astyle\ --style=linux\ -s4\ \ -m3\ -k3\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
 "map <F10> :!ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .<CR>:set tags+=./tags<CR>
@@ -432,13 +510,8 @@ set wfh
 set wfw 
 
 "gloden view
-let g:goldenview__enable_at_startup = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_check_on_open = 0
-let g:syntastic_cpp_compiler = "g++"
-let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic"
-let g:syntastic_cpp_config_file = '~/.syntastic_cpp_config'
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': []  }
+let g:goldenview_enable_at_startup = 1
+
 
 
 "remote build
@@ -465,4 +538,26 @@ nnoremap <Leader>ab :RemoteCompile ov_remote_linux_build<cr>
 nnoremap <Leader>ad :RemoteCompile ov_remote_linux_clean<cr>  
 nnoremap <Leader>as :RemoteCompile ov_remote_linux_sync<cr>  
 nnoremap <Leader>ac :RemoteCompile ov_remote_linux_config<cr>  
+
+" YCM
+"   let g:ycm_extra_conf_globlist = ['~/.vim/bundle/YouCompleteMe/cpp/ycm/*','!~/*']
+"    let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py'
+
+" Syntastic
+let g:syntastic_c_checkers=['make']
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_check_on_open=1
+let g:syntastic_enable_signs=1
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '⚠'
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*gbar
+
+let g:syntastic_check_on_wq = 0
+let g:syntastic_check_on_open = 0
+let g:syntastic_cpp_compiler = "g++"
+let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic"
+let g:syntastic_cpp_config_file = '~/.syntastic_cpp_config'
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': []  }
 
