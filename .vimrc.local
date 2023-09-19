@@ -524,6 +524,15 @@ function! SyncCode()
 endfunction
 :command! -nargs=0 SyncCode :call SyncCode()
 
+"Switch Env
+function! SwitchEnv()
+    let g:PROPATH = ""
+    let g:COMPILE_ENV = ""
+    call CDCodePath()
+endfunction
+:command! -nargs=0 SwitchEnv :call SwitchEnv()
+
+
 function! RemoteCompile(command)
     if g:COMPILE_ENV == ""
 	   call CDCodePath()
@@ -533,11 +542,25 @@ function! RemoteCompile(command)
 endfunction
 :command! -nargs=1 RemoteCompile :call RemoteCompile(<q-args>)
 
+function! IswinOS()
+    if g:COMPILE_ENV == ""
+	   call CDCodePath()
+    endif
+    let cenv = g:COMPILE_ENV	
+    if cenv == "win"
+        return 1
+    endif
+    return 0
+endfunction
+
+:command! -nargs=0 IswinOS :call IswinOS()
+
 nnoremap <Leader>a1 :w<cr>:SyncCode<cr>  
-nnoremap <Leader>ab :RemoteCompile ov_remote_linux_build<cr>  
-nnoremap <Leader>ad :RemoteCompile ov_remote_linux_clean<cr>  
-nnoremap <Leader>as :RemoteCompile ov_remote_linux_sync<cr>  
-nnoremap <Leader>ac :RemoteCompile ov_remote_linux_config<cr>  
+nnoremap <expr> <Leader>ab IswinOS() ? ':RemoteCompile ov_remote_win_build<cr>':':RemoteCompile ov_remote_linux_build<cr>'  
+nnoremap <expr> <Leader>ad IswinOS() ? ':RemoteCompile ov_remote_win_clean<cr>':':RemoteCompile ov_remote_linux_clean<cr>'  
+nnoremap <expr>  <Leader>as IswinOS() ? ':RemoteCompile ov_remote_win_sync<cr>':':RemoteCompile ov_remote_linux_sync<cr>'  
+nnoremap <expr>  <Leader>ac IswinOS() ? ':RemoteCompile ov_remote_win_config<cr>':':RemoteCompile ov_remote_linux_config<cr>'  
+nnoremap <Leader>ae :SwitchEnv<cr>  
 
 " YCM
 "   let g:ycm_extra_conf_globlist = ['~/.vim/bundle/YouCompleteMe/cpp/ycm/*','!~/*']
@@ -561,3 +584,38 @@ let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic"
 let g:syntastic_cpp_config_file = '~/.syntastic_cpp_config'
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': []  }
 
+" change p beahive
+"------------------------------------------------------------------------
+" I haven't found how to hide this function (yet)
+function! RestoreRegister()
+  if &clipboard == 'unnamed'
+    let @* = s:restore_reg
+  elseif &clipboard == 'unnamedplus'
+    let @+ = s:restore_reg
+  else
+    let @" = s:restore_reg
+  endif
+  return ''
+endfunction
+
+function! s:Repl()
+    let s:restore_reg = @"
+    return "p@=RestoreRegister()\<cr>"
+endfunction
+
+function! s:ReplSelect()
+    echo "Register to paste over selection? (<cr> => default register: ".strtrans(@").")"
+    let c = nr2char(getchar())
+    let reg = c =~ '^[0-9a-z:.%#/*+~]$'
+                \ ? '"'.c
+                \ : ''
+    return "\<C-G>".reg.s:Repl()
+endfunction
+
+" This supports "rp that permits to replace the visual selection with the
+" contents of @r
+xnoremap <silent> <expr> p <sid>Repl()
+
+" Mappings on <s-insert>, that'll also work in select mode!
+xnoremap <silent> <expr> <S-Insert> <sid>Repl()
+snoremap <silent> <expr> <S-Insert> <sid>ReplSelect()
