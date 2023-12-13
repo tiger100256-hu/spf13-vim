@@ -584,38 +584,40 @@ let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic"
 let g:syntastic_cpp_config_file = '~/.syntastic_cpp_config'
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': []  }
 
-" change p beahive
-"------------------------------------------------------------------------
-" I haven't found how to hide this function (yet)
-function! RestoreRegister()
-  if &clipboard == 'unnamed'
-    let @* = s:restore_reg
-  elseif &clipboard == 'unnamedplus'
-    let @+ = s:restore_reg
-  else
-    let @" = s:restore_reg
-  endif
-  return ''
-endfunction
+"" change p beahive
+""------------------------------------------------------------------------
+"" I haven't found how to hide this function (yet)
+"function! RestoreRegister()
+"  if &clipboard == 'unnamed'
+"    let @* = s:restore_reg
+"  elseif &clipboard == 'unnamedplus'
+"    let @+ = s:restore_reg
+"  else
+"    let @" = s:restore_reg
+"  endif
+"  return ''
+"endfunction
+"
+"function! s:Repl()
+"    let s:restore_reg = @"
+"    return "p@=RestoreRegister()\<cr>"
+"endfunction
+"
+"function! s:ReplSelect()
+"    echo "Register to paste over selection? (<cr> => default register: ".strtrans(@").")"
+"    let c = nr2char(getchar())
+"    let reg = c =~ '^[0-9a-z:.%#/*+~]$'
+"                \ ? '"'.c
+"                \ : ''
+"    return "\<C-G>".reg.s:Repl()
+"endfunction
+"
+"" This supports "rp that permits to replace the visual selection with the
+"" contents of @r
+"xnoremap <silent> <expr> p <sid>Repl()
+"
+"" Mappings on <s-insert>, that'll also work in select mode!
+"xnoremap <silent> <expr> <S-Insert> <sid>Repl()
+"snoremap <silent> <expr> <S-Insert> <sid>ReplSelect()
 
-function! s:Repl()
-    let s:restore_reg = @"
-    return "p@=RestoreRegister()\<cr>"
-endfunction
-
-function! s:ReplSelect()
-    echo "Register to paste over selection? (<cr> => default register: ".strtrans(@").")"
-    let c = nr2char(getchar())
-    let reg = c =~ '^[0-9a-z:.%#/*+~]$'
-                \ ? '"'.c
-                \ : ''
-    return "\<C-G>".reg.s:Repl()
-endfunction
-
-" This supports "rp that permits to replace the visual selection with the
-" contents of @r
-xnoremap <silent> <expr> p <sid>Repl()
-
-" Mappings on <s-insert>, that'll also work in select mode!
-xnoremap <silent> <expr> <S-Insert> <sid>Repl()
-snoremap <silent> <expr> <S-Insert> <sid>ReplSelect()
+let g:ctrlp_path_nolim = 1
