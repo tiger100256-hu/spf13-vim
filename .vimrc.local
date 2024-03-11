@@ -690,6 +690,12 @@ endfunction
 "remove unused text
 function! TextHook(textlist) abort
     let items = []
+    if IswinOS() == 1
+        for text in a:textlist
+            let items += [text]
+        endfor
+        return items
+    fi
     for text in a:textlist
         if StartsWith(text, "[REMOTE]") 
             let new_text = substitute(text, "/home/build", "/home/huyuan/program", "")
