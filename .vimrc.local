@@ -320,7 +320,7 @@ let g:COMPILE_ENV = ""
 fun! CDCodePath()
     if g:PROPATH == ""
         call inputsave()
-        let g:PROPATH = input('code root cdir: ','','customlist,CusFilePathsCompletion')
+        let g:PROPATH = input('code root cdir: ','/home/huyuan/program/openvino','customlist,CusFilePathsCompletion')
         call inputrestore()
         if g:PROPATH == ""
 			let	g:PROPATH = "/home/build/openvino"
@@ -534,12 +534,18 @@ endfunction
 :command! -nargs=0 SwitchEnv :call SwitchEnv()
 
 
-function! RemoteCompile(command)
+function! RemoteCompile(command_type)
     if g:COMPILE_ENV == ""
 	   call CDCodePath()
     endif
     let cenv = g:COMPILE_ENV	
-    execute "AsyncTask ".a:command." -os=".cenv
+    if cenv == "win"
+        execute "AsyncTask ov_remote_win_".a:command_type." -os=".cenv
+    elseif cenv == "local"
+        execute "AsyncTask ov_local_".a:command_type." -os=".cenv
+    else
+        execute "AsyncTask ov_remote_linux_".a:command_type." -os=".cenv
+    endif
 endfunction
 :command! -nargs=1 RemoteCompile :call RemoteCompile(<q-args>)
 
@@ -570,11 +576,11 @@ endfunction
 :command! -nargs=0 IswinOS :call IswinOS()
 
 nnoremap <Leader>a1 :w<cr>:SyncSingle ov_remote_linux_sync_single<cr>  
-nnoremap <expr> <Leader>ab IswinOS() ? ':RemoteCompile ov_remote_win_build<cr>':':RemoteCompile ov_remote_linux_build<cr>'  
-nnoremap <expr> <Leader>ad IswinOS() ? ':RemoteCompile ov_remote_win_clean<cr>':':RemoteCompile ov_remote_linux_clean<cr>'  
-nnoremap <expr>  <Leader>as IswinOS() ? ':RemoteCompile ov_remote_win_sync<cr>':':RemoteCompile ov_remote_linux_sync<cr>'  
-nnoremap <expr>  <Leader>ac IswinOS() ? ':RemoteCompile ov_remote_win_config<cr>':':RemoteCompile ov_remote_linux_config<cr>'  
-nnoremap <expr>  <Leader>ai IswinOS() ? ':RemoteCompile ov_remote_win_setup<cr>':':RemoteCompile ov_remote_linux_setup<cr>'  
+nnoremap <Leader>ab :RemoteCompile build<cr>  
+nnoremap <Leader>ad :RemoteCompile clean<cr>  
+nnoremap <Leader>as :RemoteCompile sync<cr> 
+nnoremap <Leader>ac :RemoteCompile config<cr>  
+nnoremap <Leader>ai :RemoteCompile setup<cr>  
 nnoremap <Leader>ae :SwitchEnv<cr>  
 
 " YCM
@@ -695,7 +701,7 @@ function! TextHook(textlist) abort
             let items += [text]
         endfor
         return items
-    fi
+    endif
     for text in a:textlist
         if StartsWith(text, "[REMOTE]") 
             let new_text = substitute(text, "/home/build", "/home/huyuan/program", "")
@@ -703,6 +709,9 @@ function! TextHook(textlist) abort
             let items += [new_text]
         elseif  StartsWith(text, "\"===") ||  StartsWith(text, "[Finished") 
             let items += [text]
+        elseif StartsWith(text, "[LOCAL]") 
+            let new_text = text[len("[LOCAL]"):]
+            let items += [new_text]
         endif
     endfor
     return items
