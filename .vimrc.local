@@ -581,6 +581,7 @@ nnoremap <Leader>ad :RemoteCompile clean<cr>
 nnoremap <Leader>as :RemoteCompile sync<cr> 
 nnoremap <Leader>ac :RemoteCompile config<cr>  
 nnoremap <Leader>ai :RemoteCompile setup<cr>  
+nnoremap <Leader>ay :AsyncTask ov_local_ycm -os=local<cr>  
 nnoremap <Leader>ae :SwitchEnv<cr>  
 
 " YCM
@@ -716,4 +717,4 @@ function! TextHook(textlist) abort
     endfor
     return items
 endfunction
-
+"set tabstop=4 shiftwidth=4 expandtab
