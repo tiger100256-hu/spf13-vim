@@ -101,12 +101,33 @@ set nocompatible
 "colorscheme CodeFactoryv3
 set background=dark
 "gui option
+function! SetRegisterForCopy(str)
+    call setreg('"', a:str)
+endfunction
+:command! -nargs=1 SetRegisterForCopy :call SetRegisterForCopy(<q-args>)
+
 if has('gui_running')
     " set guifont=Lucida_Console:h16
     set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 16
     set guioptions-=m
     set guioptions-=a
+    nnorema <leader>ig :terminal /bin/bash -i -l<CR>
+    tnoremap <S-Insert> <C-W>"0
+    tnoremap <S-Backspace> <C-W>"+
+    tnorema <c-w>4 <C-W>:SetRegisterForCopy wget --no-proxy --auth-no-challenge --http-user=openvino --http-password=openvino<CR><C-W>""
+    tnorema <c-w>6 <C-W>:SetRegisterForCopy git submodule update --init --recursive<CR><C-W>""
+    tnoremap <F1> <C-W>N
+    nnoremap <F1> <ESC>
+    tnorema <C-W>1 <C-W>:tabnext<CR>
+    tnorema <C-W>2 <C-W>:tabpre<CR>
+    tnorema <C-W>3 <C-W>:tabnew<CR>
+    nnorema <C-W>1 :tabnext<CR>
+    nnorema <C-W>2 :tabpre<CR>
+    nnorema <C-W>3 :tabnew<CR>
 endif
+
+
+
 
 "encodeing
 set encoding=utf-8 fileencodings=ucs-bom,utf-8,cp936
@@ -289,9 +310,19 @@ set clipboard=unnamed
 "     set-clipboard and Ms must be configured for the inner tmux as for any other terminal. TERM will be screen or screen-256color or tmux or tmux-256color.
 "     The outer tmux must have set-clipboard set to on rather than external and it must be configured with Ms for its outside terminal, whatever that is.
 "     The outside terminal must have OSC 52 enabled. 
-nmap <leader>osc <Plug>OSCYankOperator
-nmap <leader>yy <leader>osc_
-vmap <leader>yy <Plug>OSCYankVisual
+"nmap <leader>osc <Plug>OSCYankOperator
+"nmap <leader>yy <leader>osc_
+"vmap <leader>yy <Plug>OSCYankVisual
+
+fun! COPYTOTMPFILE()
+    call writefile(getreg('z', 1, 1), "/tmp/clipboard.txt")
+endfunc
+fun! COPYFROMTMPFILE()
+    let @" = join(readfile("/tmp/clipboard.txt"), "\n")
+endfunc
+vmap <leader>yy "zy:call COPYTOTMPFILE()<CR>
+nmap <leader>yy "zy:call COPYFROMTMPFILE()<CR>
+
 
 " copy with local clipborad
 nmap <Leader><Leader>p "+p
