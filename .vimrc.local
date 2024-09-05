@@ -747,5 +747,8 @@ function! TextHook(textlist) abort
         endif
     endfor
     return items
-endfunction
+endfunction 
+vnoremap p "0p
+vnoremap <TAB> >gv
+vnoremap <S-TAB> <gv
 "set tabstop=4 shiftwidth=4 expandtab

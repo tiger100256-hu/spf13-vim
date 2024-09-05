@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 set -x
-SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
+SHELL_FOLDER=$(cd "$(dirname $(readlink -f "$0"))";pwd)
 HOME=$SHELL_FOLDER vim $@
