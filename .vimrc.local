@@ -320,8 +320,8 @@ endfunc
 fun! COPYFROMTMPFILE()
     let @" = join(readfile("/tmp/clipboard.txt"), "\n")
 endfunc
-vmap <leader>yy "zy:call COPYTOTMPFILE()<CR>
-nmap <leader>yy "zy:call COPYFROMTMPFILE()<CR>
+vmap <leader>yy "zy:call COPYTOTMPFILE()<CR>:!putsh<CR>
+nmap <F2> :!getsh<CR>:call COPYFROMTMPFILE()<CR>
 
 
 " copy with local clipborad
