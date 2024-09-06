@@ -124,6 +124,8 @@ if has('gui_running')
     nnorema <C-W>1 :tabnext<CR>
     nnorema <C-W>2 :tabpre<CR>
     nnorema <C-W>3 :tabnew<CR>
+    nnoremap <F2> :!getsh<CR>:call COPYFROMTMPFILE()<CR>
+    tnoremap <F2> <C-W>:!getsh<CR>:call COPYFROMTMPFILE()<CR>
 endif
 
 
@@ -319,9 +321,9 @@ fun! COPYTOTMPFILE()
 endfunc
 fun! COPYFROMTMPFILE()
     let @" = join(readfile("/tmp/clipboard.txt"), "\n")
+    let @+ = join(readfile("/tmp/clipboard.txt"), "\n")
 endfunc
 vmap <leader>yy "zy:call COPYTOTMPFILE()<CR>:!putsh<CR>
-nmap <F2> :!getsh<CR>:call COPYFROMTMPFILE()<CR>
 
 
 " copy with local clipborad
