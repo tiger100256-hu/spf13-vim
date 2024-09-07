@@ -1,756 +1,594 @@
+"set sw=4 ts=4 sts=4 et tw=78 foldmarker={,} foldlevel=0 foldmethod=marker
 "source ~/.vimrc.mswin
 
-"nerdtree
-"let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$','.*\.o$','.*_.*','.*\.orig$']
-let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$','.\.o$','\.out$','.\.orig$']
-"let g:NERDTreeHijackNetrw=0
-"let g:nerdtree_tabs_open_on_new_tab = 0  
-""let NERDTreeChDirMode=0
-"let NERDTreeQuitOnOpen=1
-let g:NERDTreeWinSize=20
-nnoremap <C-X> <C-W>
-
-
-"indent line
-let g:indent_guides_enable_on_vim_startup = 1
-hi IndentGuidesOdd  ctermbg=black
-hi IndentGuidesEven ctermbg=darkgrey
-
-"document
-let g:DoxygenToolkit_briefTag_pre="@brief "
-let g:DoxygenToolkit_paramTag_pre="@param "
-let g:DoxygenToolkit_returnTag="@returns "
-"let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
-"let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
-let g:DoxygenToolkit_authorName="huyuan"
-
-"complete
-let g:neocomplete#auto_complete_delay = 500
-autocmd Filetype c set omnifunc=ccomplete#Complete
-"MAP <LEader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
-let g:ycm_confirm_extra_conf=0 
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_always_populate_location_list = 1
-"let g:EchoFuncKeyNext=1
-"let g:EchoFuncKeyPrev=1
-"
-"let s:temporary_directory = "C:/Users/yuanhu1/Downloads/tmp/"
-"terminl color
-let g:terminal_ansi_colors = [
-  \'#282828', '#CC241D', '#98971A', '#D79921',
-  \'#458588', '#B16286', '#689D6A', '#D65D0E',
-  \'#fb4934', '#b8bb26', '#fabd2f', '#83a598',
-  \'#d3869b', '#8ec07c', '#fe8019', '#FBF1C7' ]
-
-highlight Terminal guibg='#282828'
-highlight Terminal guifg='#ebdbb2'
-
-"set async task
-let g:asyncrun_open = 6
-let g:asynctasks_term_pos = 'tab'
-
-function! CompleteWords(ArgLead, CmdLine, ...)
-    return getline(1, '$')->join(' ')->split('\s\+')
-                \ ->filter({_,x->match(x, '^\h\w\+$') > -1})
-                \ ->filter({_,x->match(x, '^' . a:CmdLine) > -1})
-                \ ->sort()->uniq()
-endfunction
-
-"vimspector debug
-let g:vimspector_install_gadgets = ['vscode-cpptools', 'CodeLLDB' ]
-
-"Debug break with function
-function! Vbf()
-    call inputsave()
-    let functionName = input('Enter function: ')
-    call inputrestore()
-    execute "call vimspector#AddFunctionBreakpoint('".functionName."')"
-endfunction
-
-"lauch debug session
-function! VDS()
-    :NERDTreeClose
-	:TagbarClose
-	call vimspector#Launch()
-endfunction
-
-
-nnoremap <leader>v1 :packadd vimspector <cr>
-nnoremap <leader>v2 :call vimspector#Pause() <cr>
-nnoremap <leader>vc :call vimspector#Continue() <cr>
-nnoremap <leader>vs :call vimspector#Stop() <cr>
-nnoremap <leader>vn :call vimspector#StepOver() <cr>
-nnoremap <leader>vi :call vimspector#StepInto() <cr>
-nnoremap <leader>vo :call vimspector#StepOut() <cr>
-nnoremap <leader>vl :call VDS() <cr>
-nnoremap <leader>vr :call vimspector#Restart() <cr>
-nnoremap <leader>vq :VimspectorReset <cr>
-nnoremap <leader>vbl :call vimspector#ListBreakpoints() <cr>
-nnoremap <leader>vbt :call vimspector#ToggleBreakpoint() <cr>
-nnoremap <leader>vfu :call vimspector#UpFrame() <cr>
-nnoremap <leader>vfd :call vimspector#DownFrame() <cr>
-nnoremap <leader>vjn :call vimspector#JumpToNextBreakpoint() <cr>
-nnoremap <leader>vjp :call vimspector#JumpToPreviousBreakpoint() <cr>
-nnoremap <leader>vjc:call vimspector#RunToCursor() <cr>
-nnoremap <leader>vjl:call vimspector#GoToCurrentLine() <cr>
-nnoremap <leader>vjp:call vimspector#JumpToProgramCounter() <cr>
-nnoremap <leader>vbb :call vimspector#ToggleAdvancedBreakpoint() <cr>
-nnoremap <leader>vbf :call Vbf() <cr>
-set nocompatible
-
-"colorscheme CodeFactoryv3
-set background=dark
-"gui option
-function! SetRegisterForCopy(str)
-    call setreg('"', a:str)
-endfunction
-:command! -nargs=1 SetRegisterForCopy :call SetRegisterForCopy(<q-args>)
-
-if has('gui_running')
-    " set guifont=Lucida_Console:h16
-    set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 16
-    set guioptions-=m
-    set guioptions-=a
-    nnorema <leader>ig :terminal /bin/bash -i -l<CR>
-    tnoremap <S-Insert> <C-W>"0
-    tnoremap <S-Backspace> <C-W>"+
-    tnorema <c-w>4 <C-W>:SetRegisterForCopy wget --no-proxy --auth-no-challenge --http-user=openvino --http-password=openvino<CR><C-W>""
-    tnorema <c-w>6 <C-W>:SetRegisterForCopy git submodule update --init --recursive<CR><C-W>""
-    tnoremap <F1> <C-W>N
-    nnoremap <F1> <ESC>
-    tnorema <C-W>1 <C-W>:tabnext<CR>
-    tnorema <C-W>2 <C-W>:tabpre<CR>
-    tnorema <C-W>3 <C-W>:tabnew<CR>
-    nnorema <C-W>1 :tabnext<CR>
-    nnorema <C-W>2 :tabpre<CR>
-    nnorema <C-W>3 :tabnew<CR>
-    nnoremap <F2> :!getsh<CR>:call COPYFROMTMPFILE()<CR>
-    tnoremap <F2> <C-W>:!getsh<CR>:call COPYFROMTMPFILE()<CR>
-endif
-
-
-
-
-"encodeing
-set encoding=utf-8 fileencodings=ucs-bom,utf-8,cp936
-
-""source ~/.vimrc.cscope
-
-"映射代码美化函数到Shift+f快捷键
-
-" map <S-F> <Esc>:call CodeFormat()<CR>
-
-
-"command! ToggleNERDTreeAndTagbar call <SID>ToggleNERDTreeAndTagbar()
-"function! <SID>ToggleNERDTreeAndTagbar()
-"    let w:jumpbacktohere = 1
-"    "Detect which plugins are open
-"    if exists('t:NERDTreeBufName')
-"        let nerdtree_open = bufwinnr(t:NERDTreeBufName) != -1
-"    else
-"        let nerdtree_open = 0
-"    endif
-"    let tagbar_open = bufwinnr('__Tagbar__') != -1
-"
-"    " Perform the appropriate action
-"    "if nerdtree_open && tagbar_open
-"    "    NERDTreeClose
-"    "    TagbarClose
-"    "elseif nerdtree_open
-"    "    TagbarOpen
-"    "elseif tagbar_open
-"    "    NERDTree
-"    "    execute ":vertical resize 20"
-"    "else
-"    "    TagbarOpen
-"    "    NERDTree
-"    "    execute ":vertical resize 20"
-"    "endif
-"    NERDTreeClose
-"    TagbarClose
-"    TagbarOpen
-"    NERDTree
-"    execute ":vertical resize 20"
-"
-"    " Jump back to the original window
-"    for window in range(1, winnr('$'))
-"        execute window . 'wincmd w'
-"        if exists('w:jumpbacktohere')
-"            unlet w:jumpbacktohere
-"            break
-"        endif
-"    endfor
-"    execute ":vertical resize 80"
-"endfunction
-"nnoremap <leader>w :ToggleNERDTreeAndTagbar<CR>
-
-"map <C-e> :NERDTreeToggle<CR>:ReloadView<CR>:ReloadView<CR>
-map <C-e> :NERDTreeToggle<CR>
-nmap <leader>nt :NERDTreeFind<CR>:ReloadView<CR>
-nmap <leader>w :ReloadView<CR>
-
-command! ReloadView call <SID>ReloadView()
-function! <SID>ReloadView()
-"    let win_num = winnr('$')
-"    let nerd_size = 25
-"    let main_size = 120
-"    let tagbar_size = 120
-"    if win_num == 2 
-"       let main_size = 100
-"    elseif win_num == 3
-"       let main_size = 80
-"    elseif win_num == 1
-"        return
-"    endif
-"    if exists('t:NERDTreeBufName')
-"        let nerdtree_open = bufwinnr(t:NERDTreeBufName) != -1
-"    else
-"        let nerdtree_open = 0
-"    endif
-
-
-    " Jump back to the original window
-    "for window in range(1, winnr('$'))
-    "    execute window . 'wincmd w'
-    "    let w:bufername = bufname('%')
-    "    if stridx(w:bufername, "NERD_tree") >= 0  
-    "        execute ":vertical resize ".nerd_size
-    "    elseif stridx(w:bufername, "__Tagbar__") >= 0
-    "        if !nerdtree_open
-    "            execute ":vertical resize ".tagbar_size
-    "    else 
-    "        execute ":vertical resize ".main_size
-    "    endif
-    "endfor
-    let nerd_size = 20
-    let w:jumpbacktohere = 1
-    for window in range(1, winnr('$'))
-        execute window . 'wincmd w'
-        execute ":GoldenViewResize"
-    endfor
-    for window in range(1, winnr('$'))
-        let w:bufername = bufname('%')
-        if stridx(w:bufername, "NERD_tree") >= 0  
-            execute ":vertical resize ".nerd_size
-        endif
-    endfor
-
-         
-    for window in range(1, winnr('$'))
-        execute window . 'wincmd w'
-        if exists('w:jumpbacktohere')
-            unlet w:jumpbacktohere
-            break
-        endif
-    endfor
-endfunction
-
-"au BufWinEnter * silent :ReloadView               
-
-"autocmd VimEnter * nested :TagbarOpen
-"autocmd VimEnter * nested :NERDTreeMirrorOpen
-
-"set netrw
-let g:netrw_winsize = 25
-let g:netrw_browse_split = 4
-let g:netrw_cygwin=1
-
-function! OpenRemote(host)
-    call inputsave()
-    let passwd = input('passwd:')
-    call inputrestore()
-    let g:netrw_list_cmd = 'sshpass -p openvino ssh '.a:host.' ls -Fa'
-    let g:netrw_scp_cmd = 'sshpass -p openvino scp '
-    let g:netrw_sftp_cmd= 'sshpass -p openvino sftp '
-    execute ":Nread scp://".a:host."//"
-endfunction
-:command! -nargs=1 OpenRemote :call OpenRemote(<q-args>)
-
-function! OpenWinRemote(host)
-    call inputsave()
-    let passwd = input('passwd:')
-    call inputrestore()
-    let g:netrw_list_cmd = 'c:\"Program Files"\PuTTY\plink.exe '.a:host.' -pw '.passwd.' ls '
-    let g:netrw_scp_cmd = 'c:\"Program Files"\PuTTY\pscp.exe '
-    let g:netrw_sftp_cmd= 'c:\"Program Files"\PuTTY\psftp.exe '
-    execute ":Nread scp://".a:host."/c:"
-endfunction
-:command! -nargs=1 OpenWinRemote :call OpenWinRemote(<q-args>)
-
-" let g:dokuwiki_fenced_languages = ['c', 'python', 'html','java','c#']
-" let dokuwiki_comment=1
-let g:LargeFile=1
-
-"copy register
-"
-autocmd FocusGained * let @z=@+
-
-"keyboard map
-
-nnorema <Leader>ii  :e ~/.vimrc.local<CR>
-
-set paste
-" clipboard
-"copy for clipboard
-set clipboard=unnamed
-"set clipboard=unnamedplus
-
-" copy from terminal and tmux
-" terminal need support OSC 52 and tmux need set 
-" https://github.com/tmux/tmux/wiki/Clipboard#terminal-support---tmux-inside-tmux
-" echo $TERM
-" tmux -V
-" add below config in out and inner tmux config ~/.tmux.conf
-" set -s set-clipboard on
-" if tmux version >=3.2
-" set -as terminal-features ',$TERM_NAME:clipboard'
-" if tmux version <3.2
-" set -as terminal-overrides ',$TERM_NAME:Ms=\E]52;%p1%s;%p2%s\007'
-
-" tmux info|grep Ms: should get string
-" If tmux is run inside tmux, the inner tmux's outside terminal is tmux:
-"     set-clipboard and Ms must be configured for the inner tmux as for any other terminal. TERM will be screen or screen-256color or tmux or tmux-256color.
-"     The outer tmux must have set-clipboard set to on rather than external and it must be configured with Ms for its outside terminal, whatever that is.
-"     The outside terminal must have OSC 52 enabled. 
-"nmap <leader>osc <Plug>OSCYankOperator
-"nmap <leader>yy <leader>osc_
-"vmap <leader>yy <Plug>OSCYankVisual
-
-fun! COPYTOTMPFILE()
-    call writefile(getreg('z', 1, 1), "/tmp/clipboard.txt")
-endfunc
-fun! COPYFROMTMPFILE()
-    let @" = join(readfile("/tmp/clipboard.txt"), "\n")
-    let @+ = join(readfile("/tmp/clipboard.txt"), "\n")
-endfunc
-vmap <leader>yy "zy:call COPYTOTMPFILE()<CR>:!putsh<CR>
-
-
-" copy with local clipborad
-nmap <Leader><Leader>p "+p
-vmap <Leader><Leader>y "+y
-
-"nnoremap <leader>z4 <ESC>:set background=light<CR>colorscheme solarized<CR>
-"nnoremap <leader>z9 :!rm -rf ~/.vimswap/*<CR>
-
-"format
-nmap <leader>f1 <ESC>:set equalprg=<CR>
-"nmap <leader>f2 <ESC>:set equalprg=astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xU\ -xg\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
-"nmap <leader>f2 <ESC>:set equalprg=astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xg\ -xe\ -xy\ -L\ -xC120\ --mode=c<CR>
-nmap <leader>f2 <ESC>:set equalprg=astyle\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xg\ -xe\ -xy\ -L\ -xC120\ --mode=c<CR>
-nnoremap <leader>f3 <ESC>:%s/\n\{2,\}/\r\r/<CR>
-
-function! CusFilePathsCompletion(ArgLead, CmdLine, CursorPos)
-       let curret_dir =fnamemodify(a:ArgLead, ':p:h')
-       let myList = split(globpath(curret_dir,  '*'), '\n')
-       return filter(myList, 'v:val =~ "^'. a:ArgLead .'"')
-endfunction
-
-"code root dir
-let g:PROPATH = ""
-"remote build env
-let g:COMPILE_ENV = ""
-fun! CDCodePath()
-    if g:PROPATH == ""
-        call inputsave()
-        let g:PROPATH = input('code root cdir: ','/home/huyuan/program/openvino','customlist,CusFilePathsCompletion')
-        call inputrestore()
-        if g:PROPATH == ""
-			let	g:PROPATH = "/home/build/openvino"
-        endif
-        if ! isdirectory(g:PROPATH)
-            echo 'code root dir is not exist: '.g:PROPATH
-            let g:PROPATH = ""
-            return 1
-        endif
-    endif
-    if g:COMPILE_ENV == ""
-        call inputsave()
-        let g:COMPILE_ENV = input('COMPILE_ENV: ','','customlist,CusFilePathsCompletion')
-        call inputrestore()
-    endif
-    exec "lcd ".g:PROPATH
-    return 0
-endfunc
-
-fun! RunCtrlP()
-    if CDCodePath() == 0
-        CtrlP
-    endif
-endfunc
-
-nnoremap <Leader>pp :call CDCodePath()<cr>
-nnoremap <Leader>pf :lcd %:p:h <cr>
-nnoremap <leader>f5 :CtrlPMRUFiles<CR>
-nnoremap <leader>fp :call RunCtrlP()<CR>
-nnoremap <leader>yf :let @" = expand("%:t")<cr>
-nnoremap <leader>yp :let @" = expand("%:p")<cr>
-nnoremap <leader>yr :let @" = expand("%")<cr>
-nnoremap <leader>yw :let @" = "wget --no-proxy --auth-no-challenge --http-user=openvino --http-password=openvino"<cr>
-"ycm search 
-nnoremap <leader>yi    :YcmCompleter GoToInclude<CR>
-nnoremap <leader>yd    :YcmCompleter GoToDeclaration<CR>
-nnoremap <leader>yg    :YcmCompleter GoToDefinition<CR>
-
-"nmap <leader>z2 <ESC>:set equalprg=astyle\ --style=linux\ -s4\ \ -m3\ -k3\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
-"map <F10> :!ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .<CR>:set tags+=./tags<CR>
-" map <F10> <C-W>h<C-W>h<C-W>h:vertical res 30<CR><C-W>l:vertical res 100<CR>
-" map <F11> <Leader>c<Space>
-"set equalprg=astyle\ --style=linux\ --indent=spaces=4\ -M80\ -m3\ -k2\ -p\ -j\ -d\ -H\ -U\ -E\ -S\ -c\ -w\ -Y\ -xe\ -xy\ -L
-
-"set equalprg=astyle
-"map <F12> <ESC>!astyle --style=linux --indent=spaces=4 -M80 -k1 -y --brackets=linux -d -H  -U -f -E -C -S -c -w<CR>
-"map <F12> <ESC>:'<,'>!astyle --style=linux -s4  -m3 -k2 -p -j -d -H -U -E -S -c -w -Y -xe -xy -L -xC80 --mode=c <CR>
-
-"quickfix
-nnoremap <Leader>c1 :cnext<cr>  
-nnoremap <Leader>c2 :cprevious<cr>  
-nnoremap <Leader>c3 :cnew<cr>  
-nnoremap <Leader>c4 :col<cr>  
-nnoremap <Leader>c5 :botright copen<CR>
-nnoremap <Leader>c6 :ccl<CR>
-
-"buffers
-command! BcloseOthers call <SID>BufCloseOthers()  
-function! <SID>BufCloseOthers()  
-    let l:currentBufNum   = bufnr("%")  
-    let l:alternateBufNum = bufnr("#")  
-    for i in range(1,bufnr("$"))  
-        if buflisted(i)  
-            if i!=l:currentBufNum  
-                execute("bdelete! ".i)
-            endif  
-        endif  
-    endfor  
-endfunction  
-
-nnoremap <Leader>b1 :bn<cr>  
-nnoremap <Leader>b2 :bp<cr>  
-nnoremap <Leader>b5 :CtrlPBuffer <cr>
-nnoremap <Leader>b6 :bd<cr>  
-nnoremap <Leader>bq :bde!<cr>  
-nnoremap <leader>b7 :BcloseOthers<cr>  
-nnoremap <Leader>bt :CtrlPFunky <cr>
-nnoremap <silent> <leader>sw "_yiw:s/\(\%#\w\+\)\(\W\+\)\(\w\+\)/\3\2\1/<cr><c-o>
-
-"cscope
-if has("cscope")
-    set nocsre
-    "set csprg=C:\Users\yuanhu1\Downloads\program\Vim\vim81\cscope.exe
-    set csprg=/usr/bin/cscope
-    "set csprg=/user/local/bin/gtags-cscope.exe
-    set csto=1
-    set cst
-    set nocsverb
-    " add any database in current directory
-    if filereadable("cscope.out")
-        cs add cscope.out
-        " else add database pointed to by environment
-    elseif $CSCOPE_DB != ""
-        cs add $CSCOPE_DB
-    endif
-    set csverb
-endif
-set cscopequickfix=s-,g-,c-,d-,i-,t-,e-,f-,a-
-
-function! AddCscope()
-    if CDCodePath() != 0
-        return 1
-    endif
-    call inputsave()
-    let name = input('Enter project name: ')
-    call inputrestore()
-
-    let wcd = g:PROPATH
-    "let &makeprg = "C:/Users/yuanhu1/Downloads/program/spf13-vim-3/cscopemake.bat ".wcd." ".name
-    "execute "make"
-    "execute "cs add C:/Users/yuanhu1/Downloads/program/spf13-vim-3/~/cscope/".name."/cscope.out"
-    execute "silent !sh ~/cscopemake.sh ".wcd." ".name." > ~/cscope.log"
-    execute "cs add ~/cscope/".name."/cscope.out"
-    cs reset
-endfunction
-
-function! AddGtag()
-    if CDCodePath() != 0
-        return 1
-    endif
-    call inputsave()
-    let name = input('Enter project name: ')
-    call inputrestore()
-    let wcd = g:PROPATH
-    set cscopeprg=gtags-cscope
-    execute "silent !sh ~/gtagsmake.sh ".wcd." ".name
-    set nocsverb
-    execute "cd ~/gtags/".name
-    execute "cs add ./GTAGS"
-    execute "cs add ./GPATH"
-    execute "cs add ./GRTAGS"
-    execute "cd ".wcd
-    set csverb
-endfunction
-
-"nnoremap <leader>t3 <ESC>:call AddCscope()<CR>
-nnoremap <leader>t3 <ESC>:call AddGtag()<CR>
-nnoremap <Leader>ts :scs find s <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>tg :scs find g <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>tc :scs find c <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>tw :scs find t <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>te :scs find e <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>tf :scs find f <C-R>=expand("<cfile>")<CR><CR>
-nnoremap <Leader>ti :scs find i <C-R>=expand("<cfile>")<CR><CR>
-nnoremap <Leader>td :scs find d <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>ta :scs find a <C-R>=expand("<cword>")<CR><CR>
-
-"nnoremap <Leader>ph :set filetype=php
-"nnoremap <Leader>ht :set filetype=html
-"nnoremap <Leader>da :DoxAuthor<CR>
-"nnoremap <Leader>df :Dox<CR>
-let g:pymode_python='python'
-
-" termdebug
-let g:termdebugger = "/usr/local/bin/x86_64-linux-gnu-gdb"
-let g:termdebug_popup = 0
-let g:termdebug_wide = 163
-
-let loaded_matchparen=1 " Don't load matchit.vim (paren/bracket matching)
-set noshowmatch         " Don't match parentheses/brackets
-set nocursorline        " Don't paint cursor line
-set nocursorcolumn      " Don't paint cursor column
-set lazyredraw          " Wait to redraw
-set scrolljump=8        " Scroll 8 lines at a time at bottom/top
-let html_no_rendering=1 " Don't render italic, bold, links in HTML
-set expandtab 
-set tabstop=4 
-set shiftwidth=4
-set smartindent
-if &background == "dark"     
-    let s:base03 = "NONE"     
-    let s:base02 = "NONE"     
-endif
-set t_Co=256
-set foldmethod=syntax
-set foldlevel=3
-set shell=/bin/bash
-set cc=80
-set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
-hi SpecicalKey ctermfg=77 guifg=#654321
-set nobackup
-set nospell
-" set invlist
-set nolist
-set showcmd
-"set windows size fix
-set wfh  
-set wfw 
-
-"gloden view
-let g:goldenview_enable_at_startup = 1
-
-
-
-"remote build
-function! SyncCode()
-    if g:COMPILE_ENV == ""
-	   call CDCodePath()
-    endif
-    let cenv = g:COMPILE_ENV	
-    execute "MirrorPush ".cenv
-endfunction
-:command! -nargs=0 SyncCode :call SyncCode()
-
-"Switch Env
-function! SwitchEnv()
-    let g:PROPATH = ""
-    let g:COMPILE_ENV = ""
-    call CDCodePath()
-endfunction
-:command! -nargs=0 SwitchEnv :call SwitchEnv()
-
-
-function! RemoteCompile(command_type)
-    if g:COMPILE_ENV == ""
-	   call CDCodePath()
-    endif
-    let cenv = g:COMPILE_ENV	
-    if cenv == "win"
-        execute "AsyncTask ov_remote_win_".a:command_type." -os=".cenv
-    elseif cenv == "local"
-        execute "AsyncTask ov_local_".a:command_type." -os=".cenv
-    else
-        execute "AsyncTask ov_remote_linux_".a:command_type." -os=".cenv
-    endif
-endfunction
-:command! -nargs=1 RemoteCompile :call RemoteCompile(<q-args>)
-
-function! SyncSingle(command)
-    if g:COMPILE_ENV == ""
-	   call CDCodePath()
-    endif
-    exec "lcd ".g:PROPATH
-    let single_file = expand("%")
-    let cenv = g:COMPILE_ENV	
-    echo single_file
-    execute "AsyncTask ".a:command." -single_file=".single_file." -os=".cenv
-endfunction
-:command! -nargs=1 SyncSingle :call SyncSingle(<q-args>)
-
-
-function! IswinOS()
-    if g:COMPILE_ENV == ""
-	   call CDCodePath()
-    endif
-    let cenv = g:COMPILE_ENV	
-    if cenv == "win"
-        return 1
-    endif
-    return 0
-endfunction
-
-:command! -nargs=0 IswinOS :call IswinOS()
-
-nnoremap <Leader>a1 :w<cr>:SyncSingle ov_remote_linux_sync_single<cr>  
-nnoremap <Leader>ab :RemoteCompile build<cr>  
-nnoremap <Leader>ad :RemoteCompile clean<cr>  
-nnoremap <Leader>as :RemoteCompile sync<cr> 
-nnoremap <Leader>ac :RemoteCompile config<cr>  
-nnoremap <Leader>ai :RemoteCompile setup<cr>  
-nnoremap <Leader>ay :AsyncTask ov_local_ycm -os=local<cr>  
-nnoremap <Leader>ae :SwitchEnv<cr>  
-
-" YCM
-"   let g:ycm_extra_conf_globlist = ['~/.vim/bundle/YouCompleteMe/cpp/ycm/*','!~/*']
-"    let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py'
-
-" Syntastic
-let g:syntastic_c_checkers=['make']
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_check_on_open=1
-let g:syntastic_enable_signs=1
-let g:syntastic_error_symbol = '✗'
-let g:syntastic_warning_symbol = '⚠'
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*gbar
-
-let g:syntastic_check_on_wq = 0
-let g:syntastic_check_on_open = 0
-let g:syntastic_cpp_compiler = "g++"
-let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic"
-let g:syntastic_cpp_config_file = '~/.syntastic_cpp_config'
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': []  }
-
-"" change p beahive
-""------------------------------------------------------------------------
-"" I haven't found how to hide this function (yet)
-"function! RestoreRegister()
-"  if &clipboard == 'unnamed'
-"    let @* = s:restore_reg
-"  elseif &clipboard == 'unnamedplus'
-"    let @+ = s:restore_reg
-"  else
-"    let @" = s:restore_reg
-"  endif
-"  return ''
-"endfunction
-"
-"function! s:Repl()
-"    let s:restore_reg = @"
-"    return "p@=RestoreRegister()\<cr>"
-"endfunction
-"
-"function! s:ReplSelect()
-"    echo "Register to paste over selection? (<cr> => default register: ".strtrans(@").")"
-"    let c = nr2char(getchar())
-"    let reg = c =~ '^[0-9a-z:.%#/*+~]$'
-"                \ ? '"'.c
-"                \ : ''
-"    return "\<C-G>".reg.s:Repl()
-"endfunction
-"
-"" This supports "rp that permits to replace the visual selection with the
-"" contents of @r
-"xnoremap <silent> <expr> p <sid>Repl()
-"
-"" Mappings on <s-insert>, that'll also work in select mode!
-"xnoremap <silent> <expr> <S-Insert> <sid>Repl()
-"snoremap <silent> <expr> <S-Insert> <sid>ReplSelect()
-
-let g:ctrlp_path_nolim = 1
-
-"command! DiffHistory call s:view_git_history()
-
-:command! -nargs=1 DiffHistory :call s:view_git_history(<q-args>)
-
-
-function! s:view_git_history(index) abort
-  execute "Git difftool --name-only ".a:index
-  call s:diff_current_quickfix_entry()
-  " Bind <CR> for current quickfix window to properly set up diff split layout after selecting an item
-  " There's probably a better way to map this without changing the window
-  copen
-  nnoremap <buffer> <CR> <CR><BAR>:call <sid>diff_current_quickfix_entry()<CR>
-  wincmd p
-endfunction
-
-function s:diff_current_quickfix_entry() abort
-  " Cleanup windows
-  for window in getwininfo()
-    if window.winnr !=? winnr() && bufname(window.bufnr) =~? '^fugitive:'
-      exe 'bdelete' window.bufnr
-    endif
-  endfor
-  cc
-  call s:add_mappings()
-  let qf = getqflist({'context': 0, 'idx': 0})
-  if get(qf, 'idx') && type(get(qf, 'context')) == type({}) && type(get(qf.context, 'items')) == type([])
-    let diff = get(qf.context.items[qf.idx - 1], 'diff', [])
-    echom string(reverse(range(len(diff))))
-    for i in reverse(range(len(diff)))
-      exe (i ? 'leftabove' : 'rightbelow') 'vert diffsplit' fnameescape(diff[i].filename)
-      call s:add_mappings()
-    endfor
-  endif
-endfunction
-
-function! s:add_mappings() abort
-  nnoremap <buffer>]q :cnext <BAR> :call <sid>diff_current_quickfix_entry()<CR>
-  nnoremap <buffer>[q :cprevious <BAR> :call <sid>diff_current_quickfix_entry()<CR>
-  " Reset quickfix height. Sometimes it messes up after selecting another item
-  11copen
-  wincmd p
-endfunction
-
-"string start check
-fu! StartsWith(longer, shorter) abort
-  return a:longer[0:len(a:shorter)-1] ==# a:shorter
-endfunction
-
-"Async hook for ouput for quickfix windows,
-"replace remote dir with local dir
-"remove unused text
-function! TextHook(textlist) abort
-    let items = []
-    if IswinOS() == 1
-        for text in a:textlist
-            let items += [text]
+" nerdtree {
+    "let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$','.*\.o$','.*_.*','.*\.orig$']
+    let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$','.\.o$','\.out$','.\.orig$']
+    "let g:NERDTreeHijackNetrw=0
+    "let g:nerdtree_tabs_open_on_new_tab = 0
+    ""let NERDTreeChDirMode=0
+    "let NERDTreeQuitOnOpen=1
+    let g:NERDTreeWinSize=20
+    map <C-e> :NERDTreeToggle<CR>
+    nmap <leader>nt :NERDTreeFind<CR>:ReloadView<CR>
+    nmap <leader>w :ReloadView<CR>
+
+    command! ReloadView call <SID>ReloadView()
+    function! <SID>ReloadView()
+        let nerd_size = 20
+        let w:jumpbacktohere = 1
+        for window in range(1, winnr('$'))
+            execute window . 'wincmd w'
+            execute ":GoldenViewResize"
         endfor
-        return items
+        for window in range(1, winnr('$'))
+            let w:bufername = bufname('%')
+            if stridx(w:bufername, "NERD_tree") >= 0
+                execute ":vertical resize ".nerd_size
+            endif
+        endfor
+
+        for window in range(1, winnr('$'))
+            execute window . 'wincmd w'
+            if exists('w:jumpbacktohere')
+                unlet w:jumpbacktohere
+                break
+            endif
+        endfor
+    endfunction
+
+    "au BufWinEnter * silent :ReloadView
+    "autocmd VimEnter * nested :TagbarOpen
+    "autocmd VimEnter * nested :NERDTreeMirrorOpen
+
+"} nerdtree
+" indent line {
+    let g:indent_guides_enable_on_vim_startup = 1
+    hi IndentGuidesOdd  ctermbg=black
+    hi IndentGuidesEven ctermbg=darkgrey
+"}indent line
+
+"document {
+    let g:DoxygenToolkit_briefTag_pre="@brief "
+    let g:DoxygenToolkit_paramTag_pre="@param "
+    let g:DoxygenToolkit_returnTag="@returns "
+    "let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
+    "let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
+    let g:DoxygenToolkit_authorName="huyuan"
+    nnoremap <Leader>da :DoxAuthor<CR>
+    nnoremap <Leader>df :Dox<CR>
+"}
+
+"neocomplete {
+    let g:neocomplete#auto_complete_delay = 500
+    autocmd Filetype c set omnifunc=ccomplete#Complete
+"}neocomplete
+
+"ycm {
+    " YCM
+    " let g:ycm_extra_conf_globlist = ['~/.vim/bundle/YouCompleteMe/cpp/ycm/*','!~/*']
+    " let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py'
+    let g:ycm_confirm_extra_conf=0
+    let g:ycm_seed_identifiers_with_syntax = 1
+    let g:ycm_always_populate_location_list = 1
+    "ycm search
+    nnoremap <leader>yi    :YcmCompleter GoToInclude<CR>
+    nnoremap <leader>yd    :YcmCompleter GoToDeclaration<CR>
+    nnoremap <leader>yg    :YcmCompleter GoToDefinition<CR>
+"}ycm
+
+"terminl color {
+    let g:terminal_ansi_colors = [
+      \'#282828', '#CC241D', '#98971A', '#D79921',
+      \'#458588', '#B16286', '#689D6A', '#D65D0E',
+      \'#fb4934', '#b8bb26', '#fabd2f', '#83a598',
+      \'#d3869b', '#8ec07c', '#fe8019', '#FBF1C7' ]
+
+    highlight Terminal guibg='#282828'
+    highlight Terminal guifg='#ebdbb2'
+
+"}terminl color
+
+"vimspector debug {
+    " termdebug
+    let g:termdebugger = "/usr/local/bin/x86_64-linux-gnu-gdb"
+    let g:termdebug_popup = 0
+    let g:termdebug_wide = 163
+    let g:vimspector_install_gadgets = ['vscode-cpptools', 'CodeLLDB' ]
+
+    "Debug break with function
+    function! Vbf()
+        call inputsave()
+        let functionName = input('Enter function: ')
+        call inputrestore()
+        execute "call vimspector#AddFunctionBreakpoint('".functionName."')"
+    endfunction
+
+    "lauch debug session
+    function! VDS()
+        :NERDTreeClose
+        :TagbarClose
+        call vimspector#Launch()
+    endfunction
+
+    nnoremap <leader>v1 :packadd vimspector <cr>
+    nnoremap <leader>v2 :call vimspector#Pause() <cr>
+    nnoremap <leader>vc :call vimspector#Continue() <cr>
+    nnoremap <leader>vs :call vimspector#Stop() <cr>
+    nnoremap <leader>vn :call vimspector#StepOver() <cr>
+    nnoremap <leader>vi :call vimspector#StepInto() <cr>
+    nnoremap <leader>vo :call vimspector#StepOut() <cr>
+    nnoremap <leader>vl :call VDS() <cr>
+    nnoremap <leader>vr :call vimspector#Restart() <cr>
+    nnoremap <leader>vq :VimspectorReset <cr>
+    nnoremap <leader>vbl :call vimspector#ListBreakpoints() <cr>
+    nnoremap <leader>vbt :call vimspector#ToggleBreakpoint() <cr>
+    nnoremap <leader>vfu :call vimspector#UpFrame() <cr>
+    nnoremap <leader>vfd :call vimspector#DownFrame() <cr>
+    nnoremap <leader>vjn :call vimspector#JumpToNextBreakpoint() <cr>
+    nnoremap <leader>vjp :call vimspector#JumpToPreviousBreakpoint() <cr>
+    nnoremap <leader>vjc:call vimspector#RunToCursor() <cr>
+    nnoremap <leader>vjl:call vimspector#GoToCurrentLine() <cr>
+    nnoremap <leader>vjp:call vimspector#JumpToProgramCounter() <cr>
+    nnoremap <leader>vbb :call vimspector#ToggleAdvancedBreakpoint() <cr>
+    nnoremap <leader>vbf :call Vbf() <cr>
+    "}vimspector debug
+
+    " terminal {
+    "gui option
+    nnoremap <C-X> <C-W>
+    function! SetRegisterForCopy(str)
+        call setreg('"', a:str)
+    endfunction
+    :command! -nargs=1 SetRegisterForCopy :call SetRegisterForCopy(<q-args>)
+
+    if has('gui_running')
+        " set guifont=Lucida_Console:h16
+        set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 16
+        set guioptions-=m
+        set guioptions-=a
+        nnorema <leader>ig :terminal /bin/bash -i -l<CR>
+        tnoremap <S-Insert> <C-W>"0
+        tnoremap <S-Backspace> <C-W>"+
+        tnorema <c-w>4 <C-W>:SetRegisterForCopy wget --no-proxy --auth-no-challenge --http-user=openvino --http-password=openvino<CR><C-W>""
+        tnorema <c-w>6 <C-W>:SetRegisterForCopy git submodule update --init --recursive<CR><C-W>""
+        tnoremap <F1> <C-W>N
+        nnoremap <F1> <ESC>
+        tnorema <C-W>1 <C-W>:tabnext<CR>
+        tnorema <C-W>2 <C-W>:tabpre<CR>
+        tnorema <C-W>3 <C-W>:tabnew<CR>
+        nnorema <C-W>1 :tabnext<CR>
+        nnorema <C-W>2 :tabpre<CR>
+        nnorema <C-W>3 :tabnew<CR>
+        nnoremap <F2> :!getsh<CR>:call COPYFROMTMPFILE()<CR>
+        tnoremap <F2> <C-W>:!getsh<CR>:call COPYFROMTMPFILE()<CR>
     endif
-    for text in a:textlist
-        if StartsWith(text, "[REMOTE]") 
-            let new_text = substitute(text, "/home/build", "/home/huyuan/program", "")
-            let new_text = new_text[len("[REMOTE]"):]
-            let items += [new_text]
-        elseif  StartsWith(text, "\"===") ||  StartsWith(text, "[Finished") 
-            let items += [text]
-        elseif StartsWith(text, "[LOCAL]") 
-            let new_text = text[len("[LOCAL]"):]
-            let items += [new_text]
+"}terminal
+
+" netrw {
+    let g:netrw_winsize = 25
+    let g:netrw_browse_split = 4
+    let g:netrw_cygwin=1
+
+"}netrw
+
+" clipboard {
+    set paste
+    "copy for clipboard
+    set clipboard=unnamed
+    fun! COPYTOTMPFILE()
+        call writefile(getreg('z', 1, 1), "/tmp/clipboard.txt")
+    endfunc
+    fun! COPYFROMTMPFILE()
+        let @" = join(readfile("/tmp/clipboard.txt"), "\n")
+        let @+ = join(readfile("/tmp/clipboard.txt"), "\n")
+    endfunc
+    vmap <leader>yy "zy:call COPYTOTMPFILE()<CR>:!putsh<CR>
+
+    if has('gui_running') 
+        " copy with local clipborad
+        nmap <Leader><Leader>p "+p
+        vmap <Leader><Leader>y "+y
+    endif
+"}clipboard
+
+"format {
+    nmap <leader>f1 <ESC>:set equalprg=<CR>
+    "nmap <leader>f2 <ESC>:set equalprg=astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xU\ -xg\ -xe\ -xy\ -L\ -xC80\ --mode=c<CR>
+    "nmap <leader>f2 <ESC>:set equalprg=astyle.exe\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xg\ -xe\ -xy\ -L\ -xC120\ --mode=c<CR>
+    nmap <leader>f2 <ESC>:set equalprg=astyle\ --style=java\ --style=attach\ -A2\ -s4\ \ -m3\ -k1\ -p\ -j\ -H\ -U\ -S\ -c\ -w\ -Y\ -xg\ -xe\ -xy\ -L\ -xC120\ --mode=c<CR>
+    nnoremap <leader>f3 <ESC>:%s/\n\{2,\}/\r\r/<CR>
+"}format
+
+" project relate {
+    " bash function {
+        function! CusFilePathsCompletion(ArgLead, CmdLine, CursorPos)
+            let curret_dir =fnamemodify(a:ArgLead, ':p:h')
+            let myList = split(globpath(curret_dir,  '*'), '\n')
+            return filter(myList, 'v:val =~ "^'. a:ArgLead .'"')
+        endfunction
+
+        "code root dir
+        let g:PROPATH = ""
+        "remote build env
+        let g:COMPILE_ENV = ""
+        fun! CDCodePath()
+            if g:PROPATH == ""
+                call inputsave()
+                let g:PROPATH = input('code root cdir: ','/home/huyuan/program/openvino','customlist,CusFilePathsCompletion')
+                call inputrestore()
+                if g:PROPATH == ""
+                    let	g:PROPATH = "/home/build/openvino"
+                endif
+                if ! isdirectory(g:PROPATH)
+                    echo 'code root dir is not exist: '.g:PROPATH
+                    let g:PROPATH = ""
+                    return 1
+                endif
+            endif
+            if g:COMPILE_ENV == ""
+                call inputsave()
+                let g:COMPILE_ENV = input('COMPILE_ENV: ','','customlist,CusFilePathsCompletion')
+                call inputrestore()
+            endif
+            exec "lcd ".g:PROPATH
+            return 0
+        endfunc
+
+        fun! RunCtrlP()
+            if CDCodePath() == 0
+                CtrlP
+            endif
+        endfunc
+
+    "}bash function
+
+    "async task {
+        let g:asyncrun_open = 6
+        let g:asynctasks_term_pos = 'tab'
+        "string start check
+        fu! StartsWith(longer, shorter) abort
+          return a:longer[0:len(a:shorter)-1] ==# a:shorter
+        endfunction
+
+        "Async hook for ouput for quickfix windows,
+        "replace remote dir with local dir
+        "remove unused text
+        function! TextHook(textlist) abort
+            let items = []
+            if IswinOS() == 1
+                for text in a:textlist
+                    let items += [text]
+                endfor
+                return items
+            endif
+            for text in a:textlist
+                if StartsWith(text, "[REMOTE]")
+                    let new_text = substitute(text, "/home/build", "/home/huyuan/program", "")
+                    let new_text = new_text[len("[REMOTE]"):]
+                    let items += [new_text]
+                elseif  StartsWith(text, "\"===") ||  StartsWith(text, "[Finished")
+                    let items += [text]
+                elseif StartsWith(text, "[LOCAL]")
+                    let new_text = text[len("[LOCAL]"):]
+                    let items += [new_text]
+                endif
+            endfor
+            return items
+        endfunction
+    "}async task
+
+    "cscope {
+        if has("cscope")
+            set nocsre
+            "set csprg=C:\Users\yuanhu1\Downloads\program\Vim\vim81\cscope.exe
+            set csprg=/usr/bin/cscope
+            "set csprg=/user/local/bin/gtags-cscope.exe
+            set csto=1
+            set cst
+            set nocsverb
+            " add any database in current directory
+            if filereadable("cscope.out")
+                cs add cscope.out
+                " else add database pointed to by environment
+            elseif $CSCOPE_DB != ""
+                cs add $CSCOPE_DB
+            endif
+            set csverb
         endif
-    endfor
-    return items
-endfunction 
-vnoremap p "0p
-vnoremap <TAB> >gv
-vnoremap <S-TAB> <gv
-"set tabstop=4 shiftwidth=4 expandtab
+        set cscopequickfix=s-,g-,c-,d-,i-,t-,e-,f-,a-
+
+        function! AddCscope()
+            if CDCodePath() != 0
+                return 1
+            endif
+            call inputsave()
+            let name = input('Enter project name: ')
+            call inputrestore()
+
+            let wcd = g:PROPATH
+            "let &makeprg = "C:/Users/yuanhu1/Downloads/program/spf13-vim-3/cscopemake.bat ".wcd." ".name
+            "execute "make"
+            "execute "cs add C:/Users/yuanhu1/Downloads/program/spf13-vim-3/~/cscope/".name."/cscope.out"
+            execute "silent !sh ~/cscopemake.sh ".wcd." ".name." > ~/cscope.log"
+            execute "cs add ~/cscope/".name."/cscope.out"
+            cs reset
+        endfunction
+
+        function! AddGtag()
+            if CDCodePath() != 0
+                return 1
+            endif
+            call inputsave()
+            let name = input('Enter project name: ')
+            call inputrestore()
+            let wcd = g:PROPATH
+            set cscopeprg=gtags-cscope
+            execute "silent !sh ~/gtagsmake.sh ".wcd." ".name
+            set nocsverb
+            execute "cd ~/gtags/".name
+            execute "cs add ./GTAGS"
+            execute "cs add ./GPATH"
+            execute "cs add ./GRTAGS"
+            execute "cd ".wcd
+            set csverb
+        endfunction
+
+        "nnoremap <leader>t3 <ESC>:call AddCscope()<CR>
+        nnoremap <leader>t3 <ESC>:call AddGtag()<CR>
+        nnoremap <Leader>ts :scs find s <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <Leader>tg :scs find g <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <Leader>tc :scs find c <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <Leader>tw :scs find t <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <Leader>te :scs find e <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <Leader>tf :scs find f <C-R>=expand("<cfile>")<CR><CR>
+        nnoremap <Leader>ti :scs find i <C-R>=expand("<cfile>")<CR><CR>
+        nnoremap <Leader>td :scs find d <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <Leader>ta :scs find a <C-R>=expand("<cword>")<CR><CR>
+    "}cscope
+
+    "remote build {
+        function! SyncCode()
+            if g:COMPILE_ENV == ""
+               call CDCodePath()
+            endif
+            let cenv = g:COMPILE_ENV
+            execute "MirrorPush ".cenv
+        endfunction
+        :command! -nargs=0 SyncCode :call SyncCode()
+
+        "Switch Env
+        function! SwitchEnv()
+            let g:PROPATH = ""
+            let g:COMPILE_ENV = ""
+            call CDCodePath()
+        endfunction
+        :command! -nargs=0 SwitchEnv :call SwitchEnv()
+
+
+        function! RemoteCompile(command_type)
+            if g:COMPILE_ENV == ""
+               call CDCodePath()
+            endif
+            let cenv = g:COMPILE_ENV
+            if cenv == "win"
+                execute "AsyncTask ov_remote_win_".a:command_type." -os=".cenv
+            elseif cenv == "local"
+                execute "AsyncTask ov_local_".a:command_type." -os=".cenv
+            else
+                execute "AsyncTask ov_remote_linux_".a:command_type." -os=".cenv
+            endif
+        endfunction
+        :command! -nargs=1 RemoteCompile :call RemoteCompile(<q-args>)
+
+        function! SyncSingle(command)
+            if g:COMPILE_ENV == ""
+               call CDCodePath()
+            endif
+            exec "lcd ".g:PROPATH
+            let single_file = expand("%")
+            let cenv = g:COMPILE_ENV
+            echo single_file
+            execute "AsyncTask ".a:command." -single_file=".single_file." -os=".cenv
+        endfunction
+        :command! -nargs=1 SyncSingle :call SyncSingle(<q-args>)
+
+
+        function! IswinOS()
+            if g:COMPILE_ENV == ""
+               call CDCodePath()
+            endif
+            let cenv = g:COMPILE_ENV
+            if cenv == "win"
+                return 1
+            endif
+            return 0
+        endfunction
+
+        :command! -nargs=0 IswinOS :call IswinOS()
+
+        nnoremap <Leader>a1 :w<cr>:SyncSingle ov_remote_linux_sync_single<cr>
+        nnoremap <Leader>ab :RemoteCompile build<cr>
+        nnoremap <Leader>ad :RemoteCompile clean<cr>
+        nnoremap <Leader>as :RemoteCompile sync<cr>
+        nnoremap <Leader>ac :RemoteCompile config<cr>
+        nnoremap <Leader>ai :RemoteCompile setup<cr>
+        nnoremap <Leader>ay :AsyncTask ov_local_ycm -os=local<cr>
+        nnoremap <Leader>ae :SwitchEnv<cr>
+    "}remote build
+
+"}project relate
+
+" file relate {
+    nnoremap <Leader>pp :call CDCodePath()<cr>
+    nnoremap <Leader>pf :lcd %:p:h <cr>
+    nnoremap <leader>f5 :CtrlPMRUFiles<CR>
+    nnoremap <leader>fp :call RunCtrlP()<CR>
+    nnoremap <leader>yf :let @" = expand("%:t")<cr>
+    nnoremap <leader>yp :let @" = expand("%:p")<cr>
+    nnoremap <leader>yr :let @" = expand("%")<cr>
+"}file relate
+
+"quickfix {
+    nnoremap <Leader>c1 :cnext<cr>
+    nnoremap <Leader>c2 :cprevious<cr>
+    nnoremap <Leader>c3 :cnew<cr>
+    nnoremap <Leader>c4 :col<cr>
+    nnoremap <Leader>c5 :botright copen<CR>
+    nnoremap <Leader>c6 :ccl<CR>
+"}quickfix
+
+"buffers {
+    command! BcloseOthers call <SID>BufCloseOthers()
+    function! <SID>BufCloseOthers()
+        let l:currentBufNum   = bufnr("%")
+        let l:alternateBufNum = bufnr("#")
+        for i in range(1,bufnr("$"))
+            if buflisted(i)
+                if i!=l:currentBufNum
+                    execute("bdelete! ".i)
+                endif
+            endif
+        endfor
+    endfunction
+
+    nnoremap <Leader>b1 :bn<cr>
+    nnoremap <Leader>b2 :bp<cr>
+    nnoremap <Leader>b5 :CtrlPBuffer <cr>
+    nnoremap <Leader>b6 :bd<cr>
+    nnoremap <Leader>bq :bde!<cr>
+    nnoremap <leader>b7 :BcloseOthers<cr>
+    nnoremap <Leader>bt :CtrlPFunky <cr>
+"}buffers
+
+" php pythoh {
+    "nnoremap <Leader>ph :set filetype=php
+    "nnoremap <Leader>ht :set filetype=html
+    let g:pymode_python='python'
+"}php pythoh
+
+"edit {
+    nnoremap <silent> <leader>sw "_yiw:s/\(\%#\w\+\)\(\W\+\)\(\w\+\)/\3\2\1/<cr><c-o>
+    vnoremap p "0p
+    vnoremap <TAB> >gv
+    vnoremap <S-TAB> <gv
+"}edit
+
+" base setting {
+    nnorema <Leader>ii  :e ~/.vimrc.local<CR>
+    let g:ctrlp_path_nolim = 1
+    let g:LargeFile=1
+    "copy register
+    autocmd FocusGained * let @z=@+
+
+    let loaded_matchparen=1 " Don't load matchit.vim (paren/bracket matching)
+    set noshowmatch         " Don't match parentheses/brackets
+    set nocursorline        " Don't paint cursor line
+    set nocursorcolumn      " Don't paint cursor column
+    set lazyredraw          " Wait to redraw
+    set scrolljump=8        " Scroll 8 lines at a time at bottom/top
+    let html_no_rendering=1 " Don't render italic, bold, links in HTML
+    set expandtab
+    set tabstop=4
+    set shiftwidth=4
+    set smartindent
+    if &background == "dark"
+        let s:base03 = "NONE"
+        let s:base02 = "NONE"
+    endif
+    set t_Co=256
+    set foldmethod=syntax
+    set foldlevel=3
+    set shell=/bin/bash
+    set cc=80
+    set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
+    hi SpecicalKey ctermfg=77 guifg=#654321
+    set nobackup
+    set nospell
+    " set invlist
+    set nolist
+    set showcmd
+    "set windows size fix
+    set wfh
+    set wfw
+
+    "gloden view
+    let g:goldenview_enable_at_startup = 1
+    set nocompatible
+    "colorscheme CodeFactoryv3
+    set background=dark
+    "encodeing
+    set encoding=utf-8 fileencodings=ucs-bom,utf-8,cp936
+
+"}base setting
+
+" Syntastic {
+    "let g:syntastic_c_checkers=['make']
+    "let g:syntastic_always_populate_loc_list = 1
+    "let g:syntastic_check_on_open=1
+    "let g:syntastic_enable_signs=1
+    "let g:syntastic_error_symbol = '✗'
+    "let g:syntastic_warning_symbol = '⚠'
+    "set statusline+=%#warningmsg#
+    "set statusline+=%{SyntasticStatuslineFlag()}
+    "set statusline+=%*gbar
+    "
+    "let g:syntastic_check_on_wq = 0
+    "let g:syntastic_check_on_open = 0
+    "let g:syntastic_cpp_compiler = "g++"
+    "let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic"
+    "let g:syntastic_cpp_config_file = '~/.syntastic_cpp_config'
+    "let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': []  }
+"}Syntastic
+
+" git {
+    "command! DiffHistory call s:view_git_history()
+    :command! -nargs=1 DiffHistory :call s:view_git_history(<q-args>)
+    function! s:view_git_history(index) abort
+      execute "Git difftool --name-only ".a:index
+      call s:diff_current_quickfix_entry()
+      " Bind <CR> for current quickfix window to properly set up diff split layout after selecting an item
+      " There's probably a better way to map this without changing the window
+      copen
+      nnoremap <buffer> <CR> <CR><BAR>:call <sid>diff_current_quickfix_entry()<CR>
+      wincmd p
+    endfunction
+
+    function s:diff_current_quickfix_entry() abort
+      " Cleanup windows
+      for window in getwininfo()
+        if window.winnr !=? winnr() && bufname(window.bufnr) =~? '^fugitive:'
+          exe 'bdelete' window.bufnr
+        endif
+      endfor
+      cc
+      call s:add_mappings()
+      let qf = getqflist({'context': 0, 'idx': 0})
+      if get(qf, 'idx') && type(get(qf, 'context')) == type({}) && type(get(qf.context, 'items')) == type([])
+        let diff = get(qf.context.items[qf.idx - 1], 'diff', [])
+        echom string(reverse(range(len(diff))))
+        for i in reverse(range(len(diff)))
+          exe (i ? 'leftabove' : 'rightbelow') 'vert diffsplit' fnameescape(diff[i].filename)
+          call s:add_mappings()
+        endfor
+      endif
+    endfunction
+
+    function! s:add_mappings() abort
+      nnoremap <buffer>]q :cnext <BAR> :call <sid>diff_current_quickfix_entry()<CR>
+      nnoremap <buffer>[q :cprevious <BAR> :call <sid>diff_current_quickfix_entry()<CR>
+      " Reset quickfix height. Sometimes it messes up after selecting another item
+      11copen
+      wincmd p
+    endfunction
+"}git
+
+"unkonw function or setting {
+    function! CompleteWords(ArgLead, CmdLine, ...)
+         return getline(1, '$')->join(' ')->split('\s\+')
+                     \ ->filter({_,x->match(x, '^\h\w\+$') > -1})
+                     \ ->filter({_,x->match(x, '^' . a:CmdLine) > -1})
+                     \ ->sort()->uniq()
+
+    endfunction
+"}unkonw function or setting
