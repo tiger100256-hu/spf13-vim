@@ -74,7 +74,13 @@
     "ycm search
     nnoremap <leader>yi    :YcmCompleter GoToInclude<CR>
     nnoremap <leader>yd    :YcmCompleter GoToDeclaration<CR>
+    nnoremap <leader>ya    :YcmCompleter GoToAlternateFile<CR>
     nnoremap <leader>yg    :YcmCompleter GoToDefinition<CR>
+    nnoremap <leader>yrs    :YcmCompleter GoToReferences<CR>
+    nnoremap <leader>yc    :YcmCompleter GoToCallers<CR>
+    nnoremap <leader>ye    :YcmCompleter GoToCallees<CR>
+    nnoremap <leader>yth <Plug>(YCMTypeHierarchy)
+    nnoremap <leader>ych <Plug>(YCMCallHierarchy)
 "}ycm
 
 "terminl color {
@@ -516,6 +522,7 @@
     let g:goldenview_enable_at_startup = 1
     set nocompatible
     "colorscheme CodeFactoryv3
+    colorscheme gruvbox
     set background=dark
     "encodeing
     set encoding=utf-8 fileencodings=ucs-bom,utf-8,cp936
