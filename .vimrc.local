@@ -344,17 +344,42 @@
             set csverb
         endfunction
 
+        " enable gtags module
+        let g:gutentags_modules = ['ctags', 'gtags_cscope']
+
+        " config project root markers.
+        let g:gutentags_project_root = ['.root']
+
+        " generate datebases in my cache directory, prevent gtags files polluting my project
+        let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+        " change focus to quickfix window after search (optional).
+        let g:gutentags_plus_switch = 1
+        let g:gutentags_plus_nomap = 1
+
+        noremap <silent> <leader>ts :GscopeFind s <C-R><C-W><cr>
+        noremap <silent> <leader>tg :GscopeFind g <C-R><C-W><cr>
+        noremap <silent> <leader>tc :GscopeFind c <C-R><C-W><cr>
+        noremap <silent> <leader>tw :GscopeFind t <C-R><C-W><cr>
+        noremap <silent> <leader>te :GscopeFind e <C-R><C-W><cr>
+        noremap <silent> <leader>tf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
+        noremap <silent> <leader>ti :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+        noremap <silent> <leader>td :GscopeFind d <C-R><C-W><cr>
+        noremap <silent> <leader>ta :GscopeFind a <C-R><C-W><cr>
+        noremap <silent> <leader>tz :GscopeFind z <C-R><C-W><cr>
+
+        "will scaped
         "nnoremap <leader>t3 <ESC>:call AddCscope()<CR>
-        nnoremap <leader>t3 <ESC>:call AddGtag()<CR>
-        nnoremap <Leader>ts :scs find s <C-R>=expand("<cword>")<CR><CR>
-        nnoremap <Leader>tg :scs find g <C-R>=expand("<cword>")<CR><CR>
-        nnoremap <Leader>tc :scs find c <C-R>=expand("<cword>")<CR><CR>
-        nnoremap <Leader>tw :scs find t <C-R>=expand("<cword>")<CR><CR>
-        nnoremap <Leader>te :scs find e <C-R>=expand("<cword>")<CR><CR>
-        nnoremap <Leader>tf :scs find f <C-R>=expand("<cfile>")<CR><CR>
-        nnoremap <Leader>ti :scs find i <C-R>=expand("<cfile>")<CR><CR>
-        nnoremap <Leader>td :scs find d <C-R>=expand("<cword>")<CR><CR>
-        nnoremap <Leader>ta :scs find a <C-R>=expand("<cword>")<CR><CR>
+        "nnoremap <leader>t3 <ESC>:call AddGtag()<CR>
+        "nnoremap <Leader>ts :scs find s <C-R>=expand("<cword>")<CR><CR>
+        "nnoremap <Leader>tg :scs find g <C-R>=expand("<cword>")<CR><CR>
+        "nnoremap <Leader>tc :scs find c <C-R>=expand("<cword>")<CR><CR>
+        "nnoremap <Leader>tw :scs find t <C-R>=expand("<cword>")<CR><CR>
+        "nnoremap <Leader>te :scs find e <C-R>=expand("<cword>")<CR><CR>
+        "nnoremap <Leader>tf :scs find f <C-R>=expand("<cfile>")<CR><CR>
+        "nnoremap <Leader>ti :scs find i <C-R>=expand("<cfile>")<CR><CR>
+        "nnoremap <Leader>td :scs find d <C-R>=expand("<cword>")<CR><CR>
+        "nnoremap <Leader>ta :scs find a <C-R>=expand("<cword>")<CR><CR>
     "}cscope
 
     "remote build {
@@ -446,6 +471,14 @@
     nnoremap <Leader>c4 :col<cr>
     nnoremap <Leader>c5 :botright copen<CR>
     nnoremap <Leader>c6 :ccl<CR>
+    noremap <m-u> :PreviewScroll -1<cr>
+    noremap <m-d> :PreviewScroll +1<cr>
+    inoremap <m-u> <c-\><c-o>:PreviewScroll -1<cr>
+    inoremap <m-d> <c-\><c-o>:PreviewScroll +1<cr>
+    autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
+    autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+    noremap <F4> :PreviewSignature!<cr>
+    inoremap <F4> <c-\><c-o>:PreviewSignature!<cr>
 "}quickfix
 
 "buffers {
@@ -556,6 +589,7 @@
     "command! DiffHistory call s:view_git_history()
     :command! -nargs=1 DiffHistory :call s:view_git_history(<q-args>)
     function! s:view_git_history(index) abort
+      execute "tabnew"
       execute "Git difftool --name-only ".a:index
       call s:diff_current_quickfix_entry()
       " Bind <CR> for current quickfix window to properly set up diff split layout after selecting an item
@@ -592,7 +626,21 @@
       11copen
       wincmd p
     endfunction
+
+    nnoremap <silent> <leader>gs :tabnew<CR>:Git<CR>
+    nnoremap <silent> <leader>gd :tabnew %<CR>:Gdiffsplit<CR>
+    nnoremap <silent> <leader>gc :tabnew<CR>:Git commit<CR>
+    nnoremap <silent> <leader>gb :tabnew %<CR>:Git blame<CR>
+    nnoremap <silent> <leader>gl :tabnew<CR>:Gllog<CR>
+    nnoremap <silent> <leader>gp :Git push<CR>
+    nnoremap <silent> <leader>gr :tabnew %<CR>:Gread<CR>
+    nnoremap <silent> <leader>gw :tabnew %<CR>:Gwrite<CR>
+    nnoremap <silent> <leader>ge :tabnew %<CR>:Gedit<CR>
 "}git
+
+"tab {
+    nnoremap <silent> <leader>tq :tabclose<CR>
+"}
 
 "unkonw function or setting {
     function! CompleteWords(ArgLead, CmdLine, ...)
