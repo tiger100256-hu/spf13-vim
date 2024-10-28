@@ -406,7 +406,7 @@
                call CDCodePath()
             endif
             let cenv = g:COMPILE_ENV
-            if cenv == "win"
+            if stridx(cenv, "win") != -1
                 execute "AsyncTask ov_remote_win_".a:command_type." -os=".cenv
             elseif cenv == "local"
                 execute "AsyncTask ov_local_".a:command_type." -os=".cenv
@@ -434,7 +434,7 @@
                call CDCodePath()
             endif
             let cenv = g:COMPILE_ENV
-            if cenv == "win"
+            if stridx(cenv, "win") != -1
                 return 1
             endif
             return 0
