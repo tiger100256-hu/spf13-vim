@@ -154,7 +154,7 @@
 
     if has('gui_running')
         " set guifont=Lucida_Console:h16
-        set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 16
+        set guifont=DejaVu\ Sans\ Mono\ 14
         set guioptions-=m
         set guioptions-=a
         nnorema <leader>ig :terminal /bin/bash -i -l<CR>
