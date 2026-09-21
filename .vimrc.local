@@ -646,6 +646,13 @@
     nnoremap <silent> <leader>tq :tabclose<CR>
 "}
 
+" file comparison {
+    let s:compare_config = fnamemodify(resolve(expand('~/.vimrc.local')), ':h') . '/compare.vim'
+    if filereadable(s:compare_config)
+        execute 'source ' . fnameescape(s:compare_config)
+    endif
+"}
+
 "unkonw function or setting {
     function! CompleteWords(ArgLead, CmdLine, ...)
          return getline(1, '$')->join(' ')->split('\s\+')

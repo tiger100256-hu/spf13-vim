@@ -42,6 +42,31 @@ If you have a bash-compatible shell you can run the script directly:
     sh <(curl https://j.mp/spf13-vim3 -L)
 ```
 
+### Reuse one gVim window with tabs
+
+On Linux, install the desktop launcher to open the first file in a named gVim
+window and every later file in a new tab of that window:
+
+```bash
+./install-gvim-tab.sh
+```
+
+The installer registers `spf13-gvim-tab.desktop` for text and log files. From
+the command line, use `~/.local/bin/gvim-tab FILE...`. Set `GVIM_SERVERNAME`
+to use a different named window.
+
+### Compare two files in gVim
+
+Use **Compare > Select Two Files...** to choose a left and right file with the
+GTK file chooser. The comparison opens in a new tab with synchronized vertical
+diff windows. **Compare > Compare Current With...** uses the current file as
+the left side. Use `[c` and `]c` or the Compare menu to move between changes,
+and **Compare > Close Comparison** to return to the previous tab.
+
+The keyboard shortcuts are `<Leader>dc` for two-file selection and
+`<Leader>dw` for comparing the current file. `:CompareOpen LEFT RIGHT` provides
+the same operation from Vim's command line.
+
 ## Installing on Windows
 
 On Windows and \*nix [Git] and [Curl] are required. Also, if you haven't done so already, you'll need to install [Vim].

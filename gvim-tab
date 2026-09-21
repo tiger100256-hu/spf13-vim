@@ -1,0 +1,40 @@
+#!/bin/sh
+
+set -eu
+
+gvim_bin=${GVIM_BIN:-gvim}
+server_name=${GVIM_SERVERNAME:-SPF13_GVIM}
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+
+focus_window()
+{
+    [ -n "${DISPLAY:-}" ] || return 0
+    command -v xwininfo >/dev/null 2>&1 || return 0
+    [ -x "$script_dir/gvim-x11-focus" ] || return 0
+
+    window_id=$(xwininfo -root -tree 2>/dev/null | awk -v server="$server_name" \
+        'index(toupper($0), toupper(server)) { print $1; exit }')
+    case "$window_id" in
+        0x*) "$script_dir/gvim-x11-focus" "$window_id" >/dev/null 2>&1 || true ;;
+    esac
+}
+
+if ! command -v "$gvim_bin" >/dev/null 2>&1; then
+    printf 'gvim-tab: cannot find %s\n' "$gvim_bin" >&2
+    exit 127
+fi
+
+if [ "$#" -eq 0 ]; then
+    exec "$gvim_bin" --servername "$server_name"
+fi
+
+server_list=$($gvim_bin --serverlist 2>/dev/null || true)
+if printf '%s\n' "$server_list" | grep -Fxiq -- "$server_name"; then
+    "$gvim_bin" --servername "$server_name" --remote-tab-silent "$@"
+    "$gvim_bin" --servername "$server_name" \
+        --remote-expr 'remote_foreground(v:servername)' >/dev/null 2>&1 || true
+    focus_window
+    exit 0
+fi
+
+exec "$gvim_bin" --servername "$server_name" -p "$@"
